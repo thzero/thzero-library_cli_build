@@ -1,0 +1,19 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"type": "node",
+			"request": "launch",
+			"name": "Node",
+			"runtimeExecutable": "node",
+			"runtimeArgs":["--experimental-specifier-resolution","node"],
+			"program": "${workspaceFolder}/index.js",
+			"restart": true,
+			"console": "integratedTerminal",
+			"internalConsoleOptions": "neverOpen",
+			"args": [ "--build", "libraries", "--label", "update" ],
+			"env": { "LOG_LEVEL" : "debug", "GRPC_VERBOSITY" : "DEBUG", "GRPC_TRACE": "all" },
+			"port": 9910
+		}
+	]
+}

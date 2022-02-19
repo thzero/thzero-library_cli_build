@@ -1,0 +1,52 @@
+{
+  "name": "@thzero/library_cli_build",
+  "type": "module",
+  "version": "0.0.6",
+  "version_major": 0,
+  "version_minor": 0,
+  "version_patch": 6,
+  "version_date": "01/27/2022",
+  "description": "Build script",
+  "author": "thZero",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thzero/library_cli_build.git"
+  },
+  "bugs": {
+    "url": "https://github.com/thzero/library_cli_build/issues"
+  },
+  "homepage": "https://github.com/thzero/library_cli_build#readme",
+  "engines": {
+    "node": ">=12.8.3"
+  },
+  "scripts": {
+    "debug": "nodemon --experimental-specifier-resolution=node --nolazy --trace-uncaught index.js --build libraries --label update",
+    "start": "node --experimental-specifier-resolution=node --nolazy --trace-uncaught index.js --build libraries --label update",
+    "cli-update": "./node_modules/.bin/library-cli --updateversion --pi",
+    "cli-update-w": ".\\node_modules\\.bin\\library-cli --updateversion --pi",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@octokit/core": "^3.5.1",
+    "@thzero/library_cli": "^0.15.2",
+    "@thzero/library_common": "^0.15",
+    "@thzero/library_common_service": "^0.15.6",
+    "@thzero/library_server_logger_pino": "^0.15",
+    "@thzero/library_server_logger_winston": "^0.15",
+    "@thzero/library_server_messaging_slack": "^0.14.6",
+    "await-spawn": "^4.0.2",
+    "config": "^3.3.7",
+    "cross-spawn": "^7.0.3",
+    "github-api": "^3.4.0",
+    "isomorphic-unfetch": "^3.1.0",
+    "minimist": "^1.2.5",
+    "npm-check-updates": "^12.2.1",
+    "pino-pretty": "^7.5.1",
+    "simple-git": "^3.1.1"
+  },
+  "devDependencies": {
+    "webpack": "^5.67.0",
+    "webpack-cli": "^4.9.2"
+  }
+}

@@ -1,0 +1,13 @@
+{
+	"app": {
+		"owner": "OWNER",
+		"tokens": {
+			"github": "GITHUB_TOKEN",
+			"npm": "NPM_TOKEN"
+		},
+		"logging": {
+			"level": "LOGGING_LEVEL",
+			"prettify": "LOGGING_PRETTIFY"
+		}
+	}
+}

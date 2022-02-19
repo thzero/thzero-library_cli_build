@@ -1,0 +1,65 @@
+{
+	"app": {
+        "logging": {
+            "level": null,
+            "prettify": true
+        },
+		"buildTypes": [
+			{
+				"tag": "dependencyCheck",
+				"actions": [
+					"clone",
+					"dependencyCheck"
+				],
+				"plugins": [
+					"dependencyCheckAccumulate"
+				]
+			},
+			{
+				"tag": "license",
+				"actions": [
+					"clone",
+					"license",
+					"version",
+					"commit",
+					"merge",
+					"publish"
+				]
+			},
+			{
+				"tag": "publishOnly",
+				"actions": [
+					"publishOnly"
+				]
+			},
+			{
+				"tag": "pullRequestOnly",
+				"actions": [
+					"pull"
+				]
+			},
+			{
+				"tag": "standard",
+				"actions": [
+					"clone",
+					"dependencyUpdate",
+					"status",
+					"version",
+					"commit",
+					"merge",
+					"publish"
+				]
+			},
+			{
+				"tag": "versionOnly",
+				"actions": [
+					"clone",
+					"versionAlways",
+					"commit",
+					"merge",
+					"publish"
+				]
+			}
+		]
+    }
+}
