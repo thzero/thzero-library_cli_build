@@ -211,7 +211,7 @@ class BuildService extends Service {
 			this._info('-----------', offset);
 			this._info(`processing repo '${repo.repo}'.`, offset);
 
-			repo.pathCwd = path.join(buildLog.pathCwd, 'updates');
+			repo.pathCwd = path.join(buildLog.pathCwd, 'source');
 			this._info(`repo '${repo.repo}' working path: ${repo.pathCwd}`, offset);
 			if (!fs.existsSync(repo.pathCwd))
 				fs.mkdirSync(repo.pathCwd);
