@@ -22,7 +22,7 @@ class PublishPackageNpmActionBuildService extends NpmActionBuildService {
 			}
 
 			const content = '//registry.npmjs.org/:_authToken=${NPM_TOKEN}';
-			await fs.writeFile(path.join(repo.path, '.npmrc'), content);
+			await fs.writeFile(path.join(repo.pathPublish, '.npmrc'), content);
 
 			// await spawn('npm', [
 				// 	'publish',
