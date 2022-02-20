@@ -31,7 +31,7 @@ class PublishPackageNpmActionBuildService extends NpmActionBuildService {
 				// 	// '--dry-run'
 				// ], 
 				// { 
-				// 	cwd: repo.path,
+				// 	cwd: repo.pathPublish,
 				// 	stdio: 'inherit',
 				// 	env: {
 				// 		NPM_TOKEN: this._token
@@ -45,7 +45,7 @@ class PublishPackageNpmActionBuildService extends NpmActionBuildService {
 					// '--dry-run'
 				], 
 				{ 
-					cwd: repo.path,
+					cwd: repo.pathPublish,
 					// stdio: 'inherit',
 					env: {
 						NPM_TOKEN: this._token
