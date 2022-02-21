@@ -88,9 +88,9 @@ module.exports = function(RED) {
         msg._af.stack.push(event);
         msg._af[config.id].index++;
         var ain = null;
-        if (msg.action && msg.action !== '') {
+        if (msg.action_tag && msg.action_tag !== '') {
           for(const ins of ain = msg._af[config.id].ins) {
-            if (ins.action !== msg.action)
+            if (ins.tag !== msg.action_tag)
               continue;
             ain = ins;
             break;
