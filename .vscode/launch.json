@@ -11,7 +11,7 @@
 			"restart": true,
 			"console": "integratedTerminal",
 			"internalConsoleOptions": "neverOpen",
-			"args": [ "--build", "libraries", "--label", "update" ],
+			"args": [ "--build", "libraries", "--label", "update", "--admin", "true", "--admin_port", "13000" ],
 			"env": { "LOG_LEVEL" : "debug", "GRPC_VERBOSITY" : "DEBUG", "GRPC_TRACE": "all" },
 			"port": 9910
 		}

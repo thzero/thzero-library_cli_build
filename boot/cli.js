@@ -35,9 +35,11 @@ library-cli-build <options>
 	--branch, --r <branch> :: name of a branch to be cloned, defaults to 'dev'
 	--build, --b <build label> :: name of the build to be processed :: required
 	--label, --l <label> ::
-	--type, --t <build type tag> :: name of the build type used in processing ::
-	--year, --y <year> :: year to replace licensing copyright with, should be within +/-1 of current ::
-	--working, --w :: working path`,
+	--type, --t <build type tag> :: name of the build type used in processing
+	--year, --y <year> :: year to replace licensing copyright with, should be within +/-1 of current
+	--working, --w :: working path
+	--admin, --a :: launches the admin editor for the flows :: true or false :: default is false
+	--admin_port, --p :: port for admin editor :: default is 12000`,
 		};
 
 		return menus;
@@ -46,11 +48,28 @@ library-cli-build <options>
 	_processCommand(args) {
 		switch (this._cmd) {
 			case 'build':
-				console.log('build');
-
 				this._args = {
 					dependencyCheck: true
 				};
+
+				if ((args.admin !== null && args.admin !== undefined) || (args.a !== null && args.a !== undefined)) {
+					const admin = args.admin || args.a;
+					if (!(admin === 'true' || admin === 'false')) {
+						console.log('See --help, admin must be a boolean.');
+						return false;
+					}
+					this._args.admin = (admin === 'true');
+				}
+
+				if ((args.admin_port !== null && args.admin_port !== undefined) || (args.p !== null && args.p !== undefined)) {
+					const port = args.admin_port || args.p;
+					const temp = parseInt(port);
+					if (Number.isNaN(temp)) {
+						console.log('See --help, port must be a number.');
+						return false;
+					}
+					this._args.admin_port = port;
+				}
 
 				if ((args.branch !== null && args.branch !== undefined) || (args.r !== null && args.r !== undefined))
 					this._args.branch = args.branch || args.r;
@@ -71,7 +90,7 @@ library-cli-build <options>
 					this._args.year = args.year || args.y;
 					if (!String.isNullOrEmpty(this._args.year)) {
 						this._args.year = parseInt(this._args.year);
-						if (this._args.year === NaN) {
+						if (Number.isNaN(this._args.year)) {
 							console.log('See --help, year must be a number.');
 							return false;
 						}

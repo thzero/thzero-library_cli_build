@@ -4,8 +4,7 @@ import http from 'http';
 import express from 'express';
 import RED from 'node-red';
 
-import runtime from '@node-red/runtime';
-import redUtil from '@node-red/util';
+import openurl from 'openurl';
 
 import Constants from '../constants';
 import LibraryCommonServiceConstants from '@thzero/library_common_service/constants';
@@ -38,7 +37,6 @@ import winstonLoggerService from '@thzero/library_server_logger_winston';
 import buildService from '../service/build';
 
 import bootCli from './cli';
-import red from 'node-red';
 
 class BootMain {
 	async start(...args) {
@@ -84,9 +82,6 @@ class BootMain {
 			}
 
 			try {
-				args.editor = true;
-
-				// // Create the settings object - see default settings.js file for other options
 				const settings = {
 					httpAdminRoot: false,
 					httpNodeRoot: false,
@@ -94,9 +89,11 @@ class BootMain {
 					functionGlobalContext: { } // enables global context
 				};
 
+				const port = cli.args.admin_port ? cli.args.admin_port : 12000;
+
 				let app = null;
 				let server = null;
-				if (args.editor) {
+				if (cli.args.admin) {
 					settings.httpAdminRoot = '/red';
 					settings.httpNodeRoot = '/api';
 				
@@ -109,14 +106,14 @@ class BootMain {
 				// Initialise the runtime with a server and settings
 				RED.init(server, settings);
 
-				if (args.editor) {
+				if (cli.args.admin) {
 					// Serve the editor UI from /red
 					app.use(settings.httpAdminRoot, RED.httpAdmin);
 
-					// // // Serve the http nodes UI from /api
-					// // app.use(settings.httpNodeRoot, RED.httpNode);
+					// // Serve the http nodes UI from /api
+					// app.use(settings.httpNodeRoot, RED.httpNode);
 
-					server.listen(12000);
+					server.listen(port);
 				}
 
 				RED.start();
@@ -124,14 +121,12 @@ class BootMain {
 				RED.events.on('flows:started', async function(msg) {
 					loggerServiceI.info2('Node-Red flows have been started.');
 
-					if (!args.editor) {
-						// TODO: Need to get the correct flow, and then call the 'setflow'.
-						RED.events.emit('build:start', 'yeah yeah!'); // TODO
-					}
-				});
+					// if (!cli.args.admin) {
+					// 	// TODO: Need to get the correct flow, and then call the 'setflow'.
+					// 	RED.events.emit('build:start', 'yeah yeah!'); // TODO
+					// }
 
-				RED.events.on('build:start', async function(msg) {
-					console.log('what?!');
+					openurl.open(`http://localhost:${port}/red`);
 				});
 
 				RED.events.on('build:complete', async function(msg) {
