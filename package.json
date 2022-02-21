@@ -29,24 +29,24 @@
   },
   "dependencies": {
     "@octokit/core": "^3.5.1",
-    "@thzero/library_cli": "^0.15.2",
+    "@thzero/library_cli": "^0.15.7",
     "@thzero/library_common": "^0.15",
-    "@thzero/library_common_service": "^0.15.6",
+    "@thzero/library_common_service": "^0.15.11",
     "@thzero/library_server_logger_pino": "^0.15",
     "@thzero/library_server_logger_winston": "^0.15",
-    "@thzero/library_server_messaging_slack": "^0.14.6",
+    "@thzero/library_server_messaging_slack": "^0.14.9",
     "await-spawn": "^4.0.2",
     "config": "^3.3.7",
     "cross-spawn": "^7.0.3",
     "github-api": "^3.4.0",
     "isomorphic-unfetch": "^3.1.0",
     "minimist": "^1.2.5",
-    "npm-check-updates": "^12.2.1",
+    "npm-check-updates": "^12.4.0",
     "pino-pretty": "^7.5.1",
-    "simple-git": "^3.1.1"
+    "simple-git": "^3.2.6"
   },
   "devDependencies": {
-    "webpack": "^5.67.0",
+    "webpack": "^5.69.1",
     "webpack-cli": "^4.9.2"
   }
 }
