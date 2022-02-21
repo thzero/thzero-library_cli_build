@@ -1,0 +1,19 @@
+{
+  "name": "node-red-contrib-build-events",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "node-red" : {
+    "nodes": {
+      "build-event-complete": "build-event-complete.js",
+      "build-event-message": "build-event-message.js",
+      "build-event-start": "build-event-start.js",
+      "build-event-start-test": "build-event-start-test.js"
+    }
+  }
+}

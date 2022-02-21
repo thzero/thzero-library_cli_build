@@ -1,0 +1,28 @@
+<script type="text/javascript">
+    RED.nodes.registerType('build-event-start-test', {
+        category: 'function',
+        color: '#a6bbcf',
+        defaults: {
+            name: { value: '' }
+        },
+        inputs: 1,
+        outputs: 0,
+        icon: 'font-awesome/fa-message',
+        label: function() {
+            return this.name || 'build-event-start-test';
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="build-event-start-test">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="build-event-start-test">
+    <p>Temporary work around to launch a build test from the Node-RED editor.  It does this by sending the 'build:start' internal event message.</p>
+    <p>Setup: In the flow, add an inject node with a payload as a JSON.  Connect this node to the inject node. </p>
+    <p>Use the Inject node's "Inject now" button to trigger the workflow.</p>
+</script>

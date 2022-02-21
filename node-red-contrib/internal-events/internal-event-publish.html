@@ -1,0 +1,31 @@
+<script type="text/javascript">
+    RED.nodes.registerType('internal-event-publish', {
+        category: 'function',
+        color: '#a6bbcf',
+        defaults: {
+            name: { value: '' },
+            eventAddress: { value: '' }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: 'font-awesome/fa-message',
+        label: function() {
+            return this.name || 'internal-event-publish';
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="internal-event-publish">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-eventAddress"><i class="fa fa-tag"></i> Event Address</label>
+        <input type="text" id="node-input-eventAddress" value=1>
+    </div>
+</script>
+
+<script type="text/html" data-help-name="internal-event-publish">
+    <p>Publish events to the internal RED.events emitter.</p>
+</script>
