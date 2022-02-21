@@ -1,11 +1,14 @@
 module.exports = function(RED) {
-    function EventBuildComplete(config) {
+    function EventBuildService(config) {
         RED.nodes.createNode(this, config);
         const node = this;
+        const message = config.message;
+        const service = config.service;
         node.on('input', function(msg, send, done) {
             try {
                 node.status({fill: 'green', shape: 'dot', text: 'running' });
-                RED.events.emit('build:complete', { payload: msg.payload });
+                const test = RED.util.injector.getService(service);
+                node.send(msg);
                 if (done)
                     done();
                 node.status({});
@@ -18,5 +21,5 @@ module.exports = function(RED) {
             }
         });
     }
-    RED.nodes.registerType('build-event-complete', EventBuildComplete);
+    RED.nodes.registerType('build-service', EventBuildService);
 }

@@ -4,11 +4,14 @@ module.exports = function(RED) {
         const node = this;
         node.on('input', function(msg, send, done) {
             try {
-                RED.events.emit('build:start', { payload: msg.payload });
+                node.status({fill: 'green', shape: 'dot', text: 'running' });
+                RED.events.emit('build:start', msg);
                 if (done)
                     done();
+                node.status({});
             }
             catch (err) {
+                this.status({fill: 'red', shape: 'ring', text: 'error'});
                 if (done)
                     done(err);
             }

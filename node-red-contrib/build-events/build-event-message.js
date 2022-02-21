@@ -6,12 +6,15 @@ module.exports = function(RED) {
         const suffix = config.suffix;
         node.on('input', function(msg, send, done) {
             try {
+                node.status({fill: 'green', shape: 'dot', text: 'running' });
                 RED.events.emit('build:message:' + suffix, { payload: message });
                 node.send(msg);
                 if (done)
                     done();
+                node.status({});
             }
             catch (err) {
+                this.status({fill: 'red', shape: 'ring', text: 'error'});
                 if (done)
                     done(err);
             }

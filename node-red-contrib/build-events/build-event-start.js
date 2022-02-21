@@ -2,14 +2,14 @@ module.exports = function(RED) {
     function EventBuildStart(config) {
         RED.nodes.createNode(this, config);
         const node = this;
-        RED.events.on('build:start', async function(payload) {
+        RED.events.on('build:start', async function(msg) {
             try {
-                const msg = {
-                    payload: payload
-                }
+                node.status({fill: 'green', shape: 'dot', text: 'running' });
                 node.send(msg);
+                node.status({});
             }
             catch (err) {
+                this.status({fill: 'red', shape: 'ring', text: 'error'});
                 if (done)
                     done(err);
             }

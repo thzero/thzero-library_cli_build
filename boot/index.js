@@ -116,8 +116,11 @@ class BootMain {
 					server.listen(port);
 				}
 
+				RED.runtime.util.injector = this._injector;
+
 				RED.start();
 
+				let launched = false;
 				RED.events.on('flows:started', async function(msg) {
 					loggerServiceI.info2('Node-Red flows have been started.');
 
@@ -126,7 +129,10 @@ class BootMain {
 					// 	RED.events.emit('build:start', 'yeah yeah!'); // TODO
 					// }
 
-					openurl.open(`http://localhost:${port}/red`);
+					if (!launched) {
+						openurl.open(`http://localhost:${port}/red`);
+						launched = true;
+					}
 				});
 
 				RED.events.on('build:complete', async function(msg) {
