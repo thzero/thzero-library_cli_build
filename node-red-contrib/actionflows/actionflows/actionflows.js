@@ -87,7 +87,6 @@ module.exports = function(RED) {
       if (msg._af[config.id].index < msg._af[config.id].ins.length) {
         msg._af.stack.push(event);
         msg._af[config.id].index++;
-        
         var ain = null;
         if (msg.action && msg.action !== '') {
           for(const ins of ain = msg._af[config.id].ins) {
