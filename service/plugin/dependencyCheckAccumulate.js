@@ -57,8 +57,11 @@ class DependencyCheckAccumulatePluginBuildService extends PluginBuildService {
 		this._output(correlationId, `\tRepo Url: ${step.repo_url}`);
 		// this._output(correlationId, `\tUpgrades Available: ${upgrades}`);
 		// this._output(correlationId, JSON.stringify(step.upgrades, null, 2));
+
+		let current;
 		for (const property in step.upgrades) {
-			this._output(correlationId, `\t\t${property}: ${step.upgrades[property].current} -> ${step.upgrades[property].upgrade} `);
+			current = step.upgrades[property].current;
+			this._output(correlationId, `\t\t${property}: ${!String.isNullOrEmpty(current) ? current : 'none'} -> ${step.upgrades[property].upgrade} `);
 
 			if (!this._totals[property])
 				this._totals[property] = 0;

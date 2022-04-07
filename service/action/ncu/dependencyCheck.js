@@ -40,6 +40,7 @@ class NcuDepdencyCheckActionBuildService extends ActionBuildService {
 					upgrades[key] = { current: current, upgrade: value };
 				}
 				catch (ignore) {
+					upgrades[key] = { upgrade: value };
 				}
 			}
 		}
