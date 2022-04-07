@@ -28,7 +28,7 @@ class NcuDepdencyCheckActionBuildService extends ActionBuildService {
 			this._info(`NPM changes detected.`, offset + 1);
 			this._info(JSON.stringify(upgrades, null, 2), offset + 1);
 			repo.label = 'npm changes';
-			repo.dirty = true;
+			// repo.dirty = true;
 		}
 		else
 			this._info(`No NPM changes detected.`, offset + 1);

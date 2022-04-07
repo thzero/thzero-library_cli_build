@@ -134,7 +134,7 @@ class StandardProcessBuildService extends ProcessBuildService {
 			buildLog.stepSuccess(repo.repo, this.actionSourceVersionAlways, repo.dirty);
 		}
 
-		if (String.isNullOrEmpty(repo.label))
+		if (repo.dirty && String.isNullOrEmpty(repo.label))
 			throw Error('No label.');
 
 		if (repo.dirty && this._checkAction(correlationId, this.actionSourceCommit)) {
