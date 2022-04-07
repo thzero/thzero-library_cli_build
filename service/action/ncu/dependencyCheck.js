@@ -1,4 +1,5 @@
 import ncu from 'npm-check-updates';
+import fs from 'fs';
 
 import ActionBuildService from '../index';
 
@@ -29,14 +30,26 @@ class NcuDepdencyCheckActionBuildService extends ActionBuildService {
 			this._info(JSON.stringify(upgrades, null, 2), offset + 1);
 			repo.label = 'npm changes';
 			// repo.dirty = true;
+
+			let packageJs = fs.readFileSync(repo.pathPackage, 'utf8');
+			packageJs = JSON.parse(packageJs);
+			let current;
+			for (const [key, value] of Object.entries(upgrades)) {
+				try {
+					current = packageJs['dependencies'][key];
+					upgrades[key] = { current: current, upgrade: value };
+				}
+				catch (ignore) {
+				}
+			}
 		}
 		else
 			this._info(`No NPM changes detected.`, offset + 1);
 
 		const plugins = this._getPluginsByStep(correlationId, buildLog);
 		if (plugins) {
-			for(const plugin of plugins) 
-				await plugin.process(correlationId, repo, upgrades)
+			for (const plugin of plugins) 
+				await plugin.process(correlationId, repo, upgrades);
 		}
 
 		return this._successResponse(upgraded, correlationId);
