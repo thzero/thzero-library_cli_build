@@ -296,8 +296,7 @@ class BuildLog {
 		repo.steps.push({
 			action: action,
 			begun: true,
-			completed: false,
-			success: false
+			completed: false
 		});
 
 		this.save();

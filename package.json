@@ -21,8 +21,8 @@
     "node": ">=12.8.3"
   },
   "scripts": {
-    "debug": "nodemon --experimental-specifier-resolution=node --nolazy --trace-uncaught index.js --build libraries --label update",
-    "start": "node --experimental-specifier-resolution=node --nolazy --trace-uncaught index.js --build libraries --label update",
+    "debug": "nodemon --experimental-specifier-resolution=node --nolazy --trace-uncaught index.js --build standard --label update",
+    "start": "node --experimental-specifier-resolution=node --nolazy --trace-uncaught index.js --build standard --label update",
     "cli-update": "./node_modules/.bin/library-cli --updateversion --pi",
     "cli-update-w": ".\\node_modules\\.bin\\library-cli --updateversion --pi",
     "test": "echo \"Error: no test specified\" && exit 1"
