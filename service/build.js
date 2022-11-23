@@ -1,14 +1,14 @@
 import fs from 'fs';
 import path from 'path';
 
-import Constants from '../constants';
+import Constants from '../constants.js';
 
-import LibraryUtility from '@thzero/library_common/utility';
+import LibraryUtility from '@thzero/library_common/utility/index.js';
 
-import Service from '@thzero/library_common_service/service';
+import Service from '@thzero/library_common_service/service/index.js';
 
-import PluginBuildService from './plugin';
-import ProcessBuildService from './process';
+import PluginBuildService from './plugin/index.js';
+import ProcessBuildService from './process/index.js';
 
 class BuildService extends Service {
 	constructor() {

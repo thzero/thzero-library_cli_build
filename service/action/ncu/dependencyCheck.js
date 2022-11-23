@@ -1,7 +1,7 @@
 import ncu from 'npm-check-updates';
 import fs from 'fs';
 
-import ActionBuildService from '../index';
+import ActionBuildService from '../index.js';
 
 class NcuDepdencyCheckActionBuildService extends ActionBuildService {
 	constructor() {

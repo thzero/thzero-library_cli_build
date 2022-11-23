@@ -1,9 +1,9 @@
 import path from 'path';
 import fs from 'fs/promises';
 
-import NotImplementedError from '@thzero/library_common/errors/notImplemented';
+import NotImplementedError from '@thzero/library_common/errors/notImplemented.js';
 
-import Service from '@thzero/library_common_service/service';
+import Service from '@thzero/library_common_service/service/index.js';
 
 class PluginBuildService extends Service {
 	constructor() {

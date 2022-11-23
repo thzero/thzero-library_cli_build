@@ -4,7 +4,7 @@ import fs from 'fs/promises';
 // import spawn from 'await-spawn';
 import spawn from 'cross-spawn';
 
-import NpmActionBuildService from './index';
+import NpmActionBuildService from './index.js';
 
 class PublishPackageNpmActionBuildService extends NpmActionBuildService {
 	constructor() {

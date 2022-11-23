@@ -1,4 +1,4 @@
-import GitHubSourceActionBuildService from './index';
+import GitHubSourceActionBuildService from './index.js';
 
 class GitHubPullRequestSourceActionBuildService extends GitHubSourceActionBuildService {
 	constructor() {

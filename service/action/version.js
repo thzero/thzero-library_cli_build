@@ -1,6 +1,6 @@
-import { updateVersion } from '@thzero/library_cli/api';
+import { updateVersion } from '@thzero/library_cli/api.js';
 
-import ActionBuildService from './index';
+import ActionBuildService from './index.js';
 
 class VersionActionBuildService extends ActionBuildService {
 	constructor() {

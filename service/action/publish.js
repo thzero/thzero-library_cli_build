@@ -1,9 +1,9 @@
 import fs from 'fs';
 import path from 'path';
 
-import Constants from '../../constants';
+import Constants from '../../constants.js';
 
-import ActionBuildService from './index';
+import ActionBuildService from './index.js';
 
 class PublishActionBuildService extends ActionBuildService {
 	constructor() {

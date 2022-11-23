@@ -3,7 +3,7 @@ import path from 'path';
 
 import simpleGit from 'simple-git';
 
-import ActionBuildService from '../index';
+import ActionBuildService from '../index.js';
 
 class GitPublishCloneSourceActionBuildService extends ActionBuildService {
 	constructor() {

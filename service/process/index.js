@@ -1,6 +1,6 @@
-import NotImplementedError from '@thzero/library_common/errors/notImplemented';
+import NotImplementedError from '@thzero/library_common/errors/notImplemented.js';
 
-import Service from '@thzero/library_common_service/service';
+import Service from '@thzero/library_common_service/service/index.js';
 
 class ProcessBuildService extends Service {
 	constructor() {

@@ -1,9 +1,9 @@
 import config from 'config';
 
-import Constants from '../constants';
-import LibraryCommonServiceConstants from '@thzero/library_common_service/constants';
+import Constants from '../constants.js';
+import LibraryCommonServiceConstants from '@thzero/library_common_service/constants.js';
 
-import LibraryUtility from '@thzero/library_common/utility';
+import LibraryUtility from '@thzero/library_common/utility/index.js';
 
 // require('@thzero/library_common/utility/string');
 String.isNullOrEmpty = function(value) {
@@ -20,17 +20,17 @@ String.trim = function(value) {
 		return value;
 	return value.trim();
 }
-import injector from '@thzero/library_common/utility/injector';
+import injector from '@thzero/library_common/utility/injector.js';
 
-import configService from '../service/config';
+import configService from '../service/config.js';
 // import appMetricsMonitoringService from '@thzero/library_server_monitoring_appmetrics';
-import loggerService from '@thzero/library_common_service/service/logger';
+import loggerService from '@thzero/library_common_service/service/logger.js';
 import pinoLoggerService from '@thzero/library_server_logger_pino';
 import winstonLoggerService from '@thzero/library_server_logger_winston';
 
-import buildService from '../service/build';
+import buildService from '../service/build.js';
 
-import bootCli from './cli';
+import bootCli from './cli.js';
 
 class BootMain {
 	async start(...args) {

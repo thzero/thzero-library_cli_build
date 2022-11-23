@@ -1,4 +1,4 @@
-import PluginBuildService from '.';
+import PluginBuildService from './index.js';
 
 class DependencyCheckAccumulatePluginBuildService extends PluginBuildService {
 	static TAG = 'dependencyCheckAccumulate';

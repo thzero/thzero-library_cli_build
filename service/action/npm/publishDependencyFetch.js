@@ -1,7 +1,7 @@
 // import spawn from 'await-spawn';
 import spawn from 'cross-spawn';
 
-import NpmActionBuildService from './index';
+import NpmActionBuildService from './index.js';
 
 class NpmFetchDependencyPublishActionBuildService extends NpmActionBuildService {
 	constructor() {

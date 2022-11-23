@@ -1,24 +1,24 @@
-import Constants from '../../constants';
+import Constants from '../../constants.js';
 
-import BootPlugin from './index';
+import BootPlugin from './index.js';
 
-import GitCloneLocalSourceActionBuildService from '../../service/action/git/sourceClone';
-import GitCommitLocalSourceActionBuildService from '../../service/action/git/sourceCommit';
-import GitPublishCloneSourceActionBuildService from '../../service/action/git/sourcePublishClone';
-import GitPullLocalSourceActionBuildService from '../../service/action/git/sourcePull';
-import GitStatusLocalSourceActionBuildService from '../../service/action/git/sourceStatus';
-import GitHubSourceRemoteBuildActionService from '../../service/action/github/pullRequest';
-import LicenseBuildActionService from '../../service/action/license';
-import NpmDependencyFetchPublishBuildService from '../../service/action/npm/publishDependencyFetch';
-import NpmPublishPackageBuildService from '../../service/action/npm/publishPackage';
-import NcuDepdencyCheckBuildActionService from '../../service/action/ncu/dependencyCheck';
-import NcuDepdencyUpdateBuildActionService from '../../service/action/ncu/dependencyUpdate';
-import PublishBuildActionService from '../../service/action/publish';
-import VersionBuildActionService from '../../service/action/version';
+import GitCloneLocalSourceActionBuildService from '../../service/action/git/sourceClone.js';
+import GitCommitLocalSourceActionBuildService from '../../service/action/git/sourceCommit.js';
+import GitPublishCloneSourceActionBuildService from '../../service/action/git/sourcePublishClone.js';
+import GitPullLocalSourceActionBuildService from '../../service/action/git/sourcePull.js';
+import GitStatusLocalSourceActionBuildService from '../../service/action/git/sourceStatus.js';
+import GitHubSourceRemoteBuildActionService from '../../service/action/github/pullRequest.js';
+import LicenseBuildActionService from '../../service/action/license.js';
+import NpmDependencyFetchPublishBuildService from '../../service/action/npm/publishDependencyFetch.js';
+import NpmPublishPackageBuildService from '../../service/action/npm/publishPackage.js';
+import NcuDepdencyCheckBuildActionService from '../../service/action/ncu/dependencyCheck.js';
+import NcuDepdencyUpdateBuildActionService from '../../service/action/ncu/dependencyUpdate.js';
+import PublishBuildActionService from '../../service/action/publish.js';
+import VersionBuildActionService from '../../service/action/version.js';
 
-import DependencyOnlyAccumulatePluginService from '../../service/plugin/dependencyCheckAccumulate';
+import DependencyOnlyAccumulatePluginService from '../../service/plugin/dependencyCheckAccumulate.js';
 
-import StandardProcessBuildService from '../../service/process/standard';
+import StandardProcessBuildService from '../../service/process/standard.js';
 
 class BuildBootPlugin extends BootPlugin {
 	async _initServices() {

@@ -3,7 +3,7 @@ import fs from 'fs/promises';
 
 import fetch from 'isomorphic-unfetch';
 
-import ActionBuildService from '../index';
+import ActionBuildService from '../index.js';
 
 class NpmActionBuildService extends ActionBuildService {
 	constructor() {

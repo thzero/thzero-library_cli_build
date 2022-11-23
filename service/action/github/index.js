@@ -1,6 +1,6 @@
 import { Octokit } from '@octokit/core';
 
-import ActionBuildService from '../index';
+import ActionBuildService from '../index.js';
 
 class GitHubSourceActionBuildService extends ActionBuildService {
 	constructor() {

@@ -1,6 +1,6 @@
-import BootMain from './boot';
+import BootMain from './boot/index.js';
 
-import BuildPlugin from './boot/plugins/build';
+import BuildPlugin from './boot/plugins/build.js';
 
 (async () => {
 	const response = await (new BootMain()).start(BuildPlugin);

@@ -1,6 +1,6 @@
-import Constants from '../../constants';
+import Constants from '../../constants.js';
 
-import ProcessBuildService from './index';
+import ProcessBuildService from './index.js';
 
 class StandardProcessBuildService extends ProcessBuildService {
 	constructor() {

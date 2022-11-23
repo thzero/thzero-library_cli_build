@@ -1,6 +1,6 @@
 import simpleGit from 'simple-git';
 
-import ActionBuildService from '../index';
+import ActionBuildService from '../index.js';
 
 class GitStatusSourceActionBuildService extends ActionBuildService {
 	constructor() {

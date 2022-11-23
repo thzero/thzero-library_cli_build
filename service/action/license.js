@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-import ActionBuildService from './index';
+import ActionBuildService from './index.js';
 
 class LicenseActionBuildService extends ActionBuildService {
 	constructor() {
