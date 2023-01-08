@@ -28,9 +28,9 @@
   },
   "dependencies": {
     "@octokit/core": "^4.1.0",
-    "@thzero/library_cli": "^0.16.1",
+    "@thzero/library_cli": "^0.16.4",
     "@thzero/library_common": "^0.16",
-    "@thzero/library_common_service": "^0.16.1",
+    "@thzero/library_common_service": "^0.16.6",
     "@thzero/library_server_logger_pino": "^0.16",
     "@thzero/library_server_logger_winston": "^0.16",
     "await-spawn": "^4.0.2",
@@ -39,12 +39,12 @@
     "github-api": "^3.4.0",
     "isomorphic-unfetch": "^3.1.0",
     "minimist": "^1.2.7",
-    "npm-check-updates": "^16.4.3",
+    "npm-check-updates": "^16.6.2",
     "pino-pretty": "^9.1.1",
-    "simple-git": "^3.15.0"
+    "simple-git": "^3.15.1"
   },
   "devDependencies": {
     "webpack": "^5.75.0",
-    "webpack-cli": "^5.0.0"
+    "webpack-cli": "^5.0.1"
   }
 }
