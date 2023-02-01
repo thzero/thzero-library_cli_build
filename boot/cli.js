@@ -59,7 +59,7 @@ library-cli-build <options>
 					this._args.build = args.build || args.b;
 
 				if ((args.type !== null && args.type !== undefined) || (args.t !== null && args.t !== undefined))
-					this._args.type = args.type || args.t;
+					this._args.buildType = args.type || args.t;
 
 				if ((args.working !== null && args.working !== undefined) || (args.w !== null && args.w !== undefined))
 					this._args.working = args.working || args.w;

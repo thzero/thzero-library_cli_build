@@ -22,8 +22,9 @@
   },
   "scripts": {
     "debug": "nodemon --experimental-specifier-resolution=node --nolazy --trace-uncaught index.js --build standard --label update",
-    "start": "node --nolazy --trace-uncaught index.js --build standard --label update",
-    "start-dc": "node --nolazy --trace-uncaught index.js --build dependencyCheck --label update",
+    "start": "node --nolazy --trace-uncaught index.js --build default --type standard --label update",
+    "start-copyright": "node --nolazy --trace-uncaught index.js --build default --type license --year 2023 --label copyright update",
+    "start-dc": "node --nolazy --trace-uncaught index.js --build default --type dependencyCheck --label update",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {

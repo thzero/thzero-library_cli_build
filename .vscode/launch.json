@@ -11,7 +11,7 @@
 			"restart": true,
 			"console": "integratedTerminal",
 			"internalConsoleOptions": "neverOpen",
-			"args": [ "--build", "standard", "--label", "update" ],
+			"args": [ "--build", "default", "--type", "license", "--year", "2023", "--label", "copyright updates" ],
 			"env": { "LOG_LEVEL" : "debug", "GRPC_VERBOSITY" : "DEBUG", "GRPC_TRACE": "all" },
 			"port": 9910
 		}

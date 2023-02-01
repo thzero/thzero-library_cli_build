@@ -79,7 +79,7 @@ class BuildService extends Service {
 				this._enforceNotNull('BuildService', 'process', builds, 'builds', correlationId);
 
 				const build = builds.find(l => l.name.toLowerCase() === args.build.toLowerCase());
-				this._enforceNotNull('BuildService', 'process', build, 'build', correlationId);
+				this._enforceNotNull('BuildService', 'process', build, 'build parameter', correlationId);
 				this._enforceNotNull('BuildService', 'process', build.repos, 'build.repos', correlationId);
 				buildLog = new BuildLog(build, args);
 			}
@@ -88,8 +88,8 @@ class BuildService extends Service {
 			this._enforceNotNull('BuildService', 'process', buildTypes, 'buildTypes', correlationId);
 			let buildType = args.buildType;
 			if (String.isNullOrEmpty(buildType))
-				buildType = !String.isNullOrEmpty(buildLog.buildType) ? buildLog.buildType : Constants.BuildTags.Standard;
-			this._enforceNotEmpty('BuildService', 'process', buildType, 'buildType', correlationId);
+				buildType = !String.isNullOrEmpty(buildLog.buildType) ? buildLog.buildType : null;
+			this._enforceNotEmpty('BuildService', 'process', buildType, 'type parameter', correlationId);
 			
 			const buildTypeI = buildTypes.find(l => l.tag.toLowerCase() === buildType.toLowerCase());
 			if (!buildTypeI)
