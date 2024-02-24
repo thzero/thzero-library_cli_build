@@ -28,21 +28,21 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@octokit/core": "^4.1.0",
+    "@octokit/core": "^5.1.0",
     "@thzero/library_cli": "^0.16.4",
     "@thzero/library_common": "^0.16",
     "@thzero/library_common_service": "^0.16.6",
     "@thzero/library_server_logger_pino": "^0.16",
     "@thzero/library_server_logger_winston": "^0.16",
     "await-spawn": "^4.0.2",
-    "config": "^3.3.8",
+    "config": "^3.3.11",
     "cross-spawn": "^7.0.3",
     "github-api": "^3.4.0",
     "isomorphic-unfetch": "^4.0.2",
-    "minimist": "^1.2.7",
-    "npm-check-updates": "^16.6.2",
-    "pino-pretty": "^9.1.1",
-    "simple-git": "^3.15.1"
+    "minimist": "^1.2.8",
+    "npm-check-updates": "^16.14.15",
+    "pino-pretty": "^10.3.1",
+    "simple-git": "^3.22.0"
   },
   "devDependencies": {
     "webpack": "^5.75.0",
