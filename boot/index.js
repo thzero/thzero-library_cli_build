@@ -3,7 +3,8 @@ import config from 'config';
 import Constants from '../constants.js';
 import LibraryCommonServiceConstants from '@thzero/library_common_service/constants.js';
 
-import LibraryUtility from '@thzero/library_common/utility/index.js';
+import LibraryCommonUtility from '@thzero/library_common/utility/index.js';
+import LibraryMomentUtility from '@thzero/library_common/utility/moment.js';
 
 // require('@thzero/library_common/utility/string');
 String.isNullOrEmpty = function(value) {
@@ -46,7 +47,7 @@ class BootMain {
 
 			this._injector = injector;
 
-			LibraryUtility.initDateTime();
+			LibraryMomentUtility.initDateTime();
 
 			// https://github.com/lorenwest/node-config/wiki
 			this._appConfig = new configService(config.get('app'));
@@ -77,7 +78,7 @@ class BootMain {
 
 			try {
 				const service = this._injector.getService(Constants.InjectorKeys.SERVICE_BUILD);
-				const response = service.process(LibraryUtility.generateId(), cli.args);
+				const response = service.process(LibraryCommonUtility.generateId(), cli.args);
 				return response;
 			}
 			catch (err) {
