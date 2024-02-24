@@ -3,7 +3,8 @@ import path from 'path';
 
 import Constants from '../constants.js';
 
-import LibraryUtility from '@thzero/library_common/utility/index.js';
+import LibraryCommonUtility from '@thzero/library_common/utility/index.js';
+import LibraryMomentUtility from '@thzero/library_common/utility/moment.js';
 
 import Service from '@thzero/library_common_service/service/index.js';
 
@@ -182,7 +183,7 @@ class BuildService extends Service {
 				}
 
 			buildLog.add(repo.repo);
-			response = await this._processExecuteRepo(correlationId, args, buildService, buildLog, LibraryUtility.cloneDeep(repo), offset);
+			response = await this._processExecuteRepo(correlationId, args, buildService, buildLog, LibraryCommonUtility.cloneDeep(repo), offset);
 			if (this._hasFailed(response)) {
 				buildLog.failure(repo.repo);
 				return response;
@@ -226,7 +227,7 @@ class BuildService extends Service {
 			repo.versionIncrement = args.versionIncrement;
 			repo.versionUpdate = args.versionUpdate;
 
-			return await buildService.process(LibraryUtility.generateId(), buildLog, repo, offset + 1);
+			return await buildService.process(LibraryCommonUtility.generateId(), buildLog, repo, offset + 1);
 		}
 		finally {
 			this._info(`...processed repo '${!String.isNullOrEmpty(repoName) ? repoName : '<unknown>'}'.`, offset);
@@ -237,7 +238,7 @@ class BuildService extends Service {
 
 class BuildLog {
 	constructor(build, args) {
-		this.id = LibraryUtility.generateId();
+		this.id = LibraryCommonUtility.generateId();
 
 		this.args = args;
 		this.name = build.name;
@@ -245,7 +246,7 @@ class BuildLog {
 		this.repos = build.repos;
 		this.repoResults = [];
 
-		this.fileName = `${this.name}_${LibraryUtility.getTimestamp()}.json`;
+		this.fileName = `${this.name}_${LibraryMomentUtility.getTimestamp()}.json`;
 	}
 
 	add(name) {
@@ -275,7 +276,7 @@ class BuildLog {
 		if (!fs.existsSync(dir))
 			fs.mkdirSync(dir);
 
-		const temp = LibraryUtility.cloneDeep(this);
+		const temp = LibraryCommonUtility.cloneDeep(this);
 		delete temp.pluginsAvailable;
 		fs.writeFileSync(path.join(dir, this.fileName), JSON.stringify(temp));
 	}
