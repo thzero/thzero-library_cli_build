@@ -35,6 +35,9 @@ library-cli-build <options>
 	--branch, --r <branch> :: name of a branch to be cloned, defaults to 'dev'
 	--build, --b <build label> :: name of the build to be processed :: required
 	--label, --l <label> ::
+	--major, --vma <version> :: package major version to use ::
+	--minor, --vmi <version> :: package minor version to use, minor default to 0 ::
+	--pi :: increment the package build version ::
 	--type, --t <build type tag> :: name of the build type used in processing ::
 	--year, --y <year> :: year to replace licensing copyright with, should be within +/-1 of current ::
 	--working, --w :: working path`,
@@ -66,6 +69,43 @@ library-cli-build <options>
 
 				if ((args.label !== null && args.label !== undefined) || (args.l !== null && args.l !== undefined))
 					this._args.label = args.label || args.l;
+
+				if ((args.major !== null && args.major !== undefined) || (args.vma !== null && args.vma !== undefined)) {
+					this._args.major = args.major || args.vma;
+					if (!String.isNullOrEmpty(this._args.major)) {
+						this._args.major = parseInt(this._args.major);
+						if (this._args.major === NaN) {
+							console.log('See --help, major must be a number.');
+							return false;
+						}
+						
+						const year = new Date().getFullYear();
+						if (this._args.major < 1) {
+							console.log(`See --help, major must be a number that is greater than 1.`);
+							return false;
+						}
+					}
+				}
+
+				if ((args.minor !== null && args.minor !== undefined) || (args.vmi !== null && args.vmi !== undefined)) {
+					this._args.minor = args.minor || args.vmi;
+					if (!String.isNullOrEmpty(this._args.minor)) {
+						this._args.minor = parseInt(this._args.minor);
+						if (this._args.minor === NaN) {
+							console.log('See --help, minor must be a number.');
+							return false;
+						}
+						
+						const year = new Date().getFullYear();
+						if (this._args.minor < 0) {
+							console.log(`See --help, minor must be a number that is greater than 0.`);
+							return false;
+						}
+					}
+				}
+
+				if ((args.pi !== null && args.pi !== undefined))
+					this._args.pi = true;
 
 				if ((args.year !== null && args.year !== undefined) || (args.y !== null && args.y !== undefined)) {
 					this._args.year = args.year || args.y;
