@@ -7,10 +7,24 @@ class VersionActionBuildService extends ActionBuildService {
 		super();
 	}
 
-	async _process(correlationId, buildLog, repo, offset) {
+	async _process(correlationId, buildLog, repo) {
+		let pi = buildLog.args.pi === true;
+		let major = null;
+		if (!String.isNullOrEmpty(buildLog.args.major)) {
+			major = buildLog.args.major;
+			pi = false;
+		}
+		let minor = null;
+		if (!String.isNullOrEmpty(buildLog.args.minor)) {
+			minor = buildLog.args.minor;
+			pi = false;
+		}
+
 		const results = await updateVersion({
 			packagePath: repo.pathPackage,
-			pi: true
+			major: major,
+			minor: minor,
+			pi: pi
 		});
 		this._logger.info2('\t\t' + (results.message || results.error) ? results.message ? results.message : '' : results.error ? results.error : 'failed');
 
