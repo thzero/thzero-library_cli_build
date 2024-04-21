@@ -104,7 +104,7 @@ library-cli-build <options>
 					}
 				}
 
-				if ((args.pi !== null && args.pi !== undefined))
+				if ((args.pi === null || args.pi === undefined))
 					this._args.pi = true;
 
 				if ((args.year !== null && args.year !== undefined) || (args.y !== null && args.y !== undefined)) {
