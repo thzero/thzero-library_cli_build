@@ -41,9 +41,9 @@
     "github-api": "^3.4.0",
     "isomorphic-unfetch": "^4.0.2",
     "minimist": "^1.2.8",
-    "npm-check-updates": "^16.14.18",
-    "pino-pretty": "^11.0.0",
-    "simple-git": "^3.23.0"
+    "npm-check-updates": "^16.14.20",
+    "pino-pretty": "^11.1.0",
+    "simple-git": "^3.24.0"
   },
   "devDependencies": {
     "webpack": "^5.91.0",
