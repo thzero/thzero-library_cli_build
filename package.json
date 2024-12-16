@@ -36,17 +36,17 @@
     "@thzero/library_server_logger_pino": "^0.18",
     "@thzero/library_server_logger_winston": "^0.18",
     "await-spawn": "^4.0.2",
-    "config": "^3.3.11",
-    "cross-spawn": "^7.0.3",
+    "config": "^3.3.12",
+    "cross-spawn": "^7.0.6",
     "github-api": "^3.4.0",
     "isomorphic-unfetch": "^4.0.2",
     "minimist": "^1.2.8",
     "npm-check-updates": "^16.14.20",
-    "pino-pretty": "^11.1.0",
-    "simple-git": "^3.24.0"
+    "pino-pretty": "^11.3.0",
+    "simple-git": "^3.27.0"
   },
   "devDependencies": {
-    "webpack": "^5.91.0",
+    "webpack": "^5.97.1",
     "webpack-cli": "^5.1.4"
   }
 }
