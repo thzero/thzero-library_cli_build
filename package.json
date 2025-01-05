@@ -1,11 +1,11 @@
 {
   "name": "@thzero/library_cli_build",
   "type": "module",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "version_major": 0,
   "version_minor": 0,
-  "version_patch": 9,
-  "version_date": "04/21/2024",
+  "version_patch": 10,
+  "version_date": "12/16/2024",
   "description": "Build script",
   "author": "thZero",
   "license": "MIT",
@@ -37,7 +37,7 @@
     "@thzero/library_server_logger_winston": "^0.18",
     "await-spawn": "^4.0.2",
     "config": "^3.3.12",
-    "cross-spawn": "^7.0.3",
+    "cross-spawn": "^7.0.6",
     "github-api": "^3.4.0",
     "isomorphic-unfetch": "^4.0.2",
     "minimist": "^1.2.8",
@@ -46,7 +46,7 @@
     "simple-git": "^3.27.0"
   },
   "devDependencies": {
-    "webpack": "^5.95.0",
+    "webpack": "^5.97.1",
     "webpack-cli": "^5.1.4"
   }
 }
