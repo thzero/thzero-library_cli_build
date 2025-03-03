@@ -128,7 +128,7 @@ class GitHubPullRequestSourceActionBuildService extends GitHubSourceActionBuildS
 		try {
 			this._enforceNotNull('GitHubPullRequestSourceActionBuildService', '_pullRequest', status, 'status', correlationId);
 
-			this._info(`creating github pull request...`, offset);
+			this._info(`creating github pull request...#`, offset);
 
 			const responseCreate = await this._pullRequestCreate(correlationId, repoI, status, offset + 1);
 			if (!responseCreate.success)
@@ -155,10 +155,10 @@ class GitHubPullRequestSourceActionBuildService extends GitHubSourceActionBuildS
 		try {
 			this._enforceNotNull('GitHubPullRequestSourceActionBuildService', '_pullRequestCreate', status, 'status', correlationId);
 
-			this._info(`creating github pull request...`, offset);
+			this._info(`creating github pull request...#`, offset);
 
 			if (repoI.pullNumber) {
-				this._info(`...creating github pull request '${repoI.pullNumber}' completed.`, offset);
+				this._info(`...creating github pull request #'${repoI.pullNumber}' completed.`, offset);
 				this._logger.debug('GitHubPullRequestSourceActionBuildService', '_pullRequest', 'pullNumber', pullNumber, correlationId);
 				return this._successResponse(pullNumber, correlationId);
 			}
@@ -186,7 +186,7 @@ class GitHubPullRequestSourceActionBuildService extends GitHubSourceActionBuildS
 
 			this._logger.debug('GitHubPullRequestSourceActionBuildService', '_pullRequest', 'pullNumber', repoI.pullNumber, correlationId);
 
-			this._info(`...creating github pull request '${repoI.pullNumber}' completed.`, offset);
+			this._info(`...creating github pull request #'${repoI.pullNumber}' completed.`, offset);
 
 			status.pullNumber = repoI.pullNumber;
 			status.commited = true;
