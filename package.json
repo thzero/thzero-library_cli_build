@@ -1,13 +1,15 @@
 {
   "name": "@thzero/library_cli_build",
   "type": "module",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "version_major": 0,
   "version_minor": 0,
-  "version_patch": 11,
-  "version_date": "10/15/2025",
+  "version_patch": 12,
+  "version_date": "02/07/2026",
   "description": "Build script",
   "author": "thZero",
+  "author_url": "https://www.thzero.com",
+  "copyright": "2020-2026",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -23,7 +25,7 @@
   "scripts": {
     "debug": "nodemon --experimental-specifier-resolution=node --nolazy --trace-uncaught index.js --build standard --label update",
     "start": "node --nolazy --trace-uncaught index.js --build default --type standard --label update",
-    "start-copyright": "node --nolazy --trace-uncaught index.js --build default --type license --year 2025 --label copyright update",
+    "start-copyright": "node --nolazy --trace-uncaught index.js --build default --type license --year 2026 --label copyright update",
     "start-dc": "node --nolazy --trace-uncaught index.js --build default --type dependencyCheck --label update",
     "start-version": "node --nolazy --trace-uncaught index.js --build default --type versionOnly --label 'version update' --m 18'",
     "test": "echo \"Error: no test specified\" && exit 1"
