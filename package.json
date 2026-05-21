@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/thzero/library_cli_build#readme",
   "engines": {
-    "node": ">=12.8.3"
+    "node": ">=22"
   },
   "scripts": {
     "debug": "nodemon --experimental-specifier-resolution=node --nolazy --trace-uncaught index.js --build standard --label update",

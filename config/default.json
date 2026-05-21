@@ -35,14 +35,29 @@
 			{
 				"tag": "pullRequestOnly",
 				"actions": [
+					"clean",
 					"pull"
 				]
 			},
 			{
 				"tag": "standard",
 				"actions": [
+					"clean",
 					"clone",
 					"dependencyUpdate",
+					"status",
+					"version",
+					"commit",
+					"merge",
+					"publish"
+				]
+			},
+			{
+				"tag": "sync",
+				"actions": [
+					"clean",
+					"clone",
+					"copy",
 					"status",
 					"version",
 					"commit",

@@ -1,0 +1,1 @@
+node --nolazy --trace-uncaught index.js --build default --type sync --source %1 --label %2

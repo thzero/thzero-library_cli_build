@@ -14,6 +14,8 @@ import NpmPublishPackageBuildService from '../../service/action/npm/publishPacka
 import NcuDepdencyCheckBuildActionService from '../../service/action/ncu/dependencyCheck.js';
 import NcuDepdencyUpdateBuildActionService from '../../service/action/ncu/dependencyUpdate.js';
 import PublishBuildActionService from '../../service/action/publish.js';
+import SourceCleanActionBuildService from '../../service/action/source/clean.js';
+import SourceCopyActionBuildService from '../../service/action/source/copy.js';
 import VersionBuildActionService from '../../service/action/version.js';
 
 import DependencyOnlyAccumulatePluginService from '../../service/plugin/dependencyCheckAccumulate.js';
@@ -33,8 +35,10 @@ class BuildBootPlugin extends BootPlugin {
 		this._injectService(Constants.InjectorKeys.SERVICE_BUILD_ACTION_PUBLISH_DEPENDENCY_FETCH, new NpmDependencyFetchPublishBuildService());
 		this._injectService(Constants.InjectorKeys.SERVICE_BUILD_ACTION_PUBLISH_PACKAGE, new NpmPublishPackageBuildService());
 		this._injectService(Constants.InjectorKeys.SERVICE_BUILD_ACTION_PUBLISH_SOURCE_CLONE, new GitPublishCloneSourceActionBuildService());
+		this._injectService(Constants.InjectorKeys.SERVICE_BUILD_ACTION_SOURCE_LOCAL_CLEAN, new SourceCleanActionBuildService());
 		this._injectService(Constants.InjectorKeys.SERVICE_BUILD_ACTION_SOURCE_LOCAL_CLONE, new GitCloneLocalSourceActionBuildService());
 		this._injectService(Constants.InjectorKeys.SERVICE_BUILD_ACTION_SOURCE_LOCAL_COMMIT, new GitCommitLocalSourceActionBuildService());
+		this._injectService(Constants.InjectorKeys.SERVICE_BUILD_ACTION_SOURCE_LOCAL_COPY, new SourceCopyActionBuildService());
 		this._injectService(Constants.InjectorKeys.SERVICE_BUILD_ACTION_SOURCE_LOCAL_PULL, new GitPullLocalSourceActionBuildService());
 		this._injectService(Constants.InjectorKeys.SERVICE_BUILD_ACTION_SOURCE_LOCAL_STATUS, new GitStatusLocalSourceActionBuildService());
 		this._injectService(Constants.InjectorKeys.SERVICE_BUILD_ACTION_SOURCE_REMOTE, new GitHubSourceRemoteBuildActionService());
