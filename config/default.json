@@ -8,6 +8,7 @@
 			{
 				"tag": "dependencyCheck",
 				"actions": [
+					"clean",
 					"clone",
 					"dependencyCheck"
 				],
@@ -18,6 +19,7 @@
 			{
 				"tag": "license",
 				"actions": [
+					"clean",
 					"clone",
 					"license",
 					"version",
@@ -68,6 +70,7 @@
 			{
 				"tag": "versionOnly",
 				"actions": [
+					"clean",
 					"clone",
 					"versionAlways",
 					"commit",

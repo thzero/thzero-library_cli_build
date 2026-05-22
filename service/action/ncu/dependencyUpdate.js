@@ -1,4 +1,4 @@
-import ncu from 'npm-check-updates';
+import { run as ncuRun } from 'npm-check-updates';
 
 import ActionBuildService from '../index.js';
 
@@ -18,7 +18,7 @@ class NcuDepdencyUpdateActionBuildService extends ActionBuildService {
 		if (repo.dependencyReject)
 			options.reject = repo.dependencyReject;
 			
-		let upgrades = await ncu.run(options);
+		let upgrades = await ncuRun(options);
 
 		this._logger.debug('NcuDepdencyUpdateBuildService', '_process', 'upgrades', upgrades, correlationId);
 		const upgraded = (upgrades ? (Object.entries(upgrades).length > 0) : false);
