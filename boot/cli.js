@@ -35,6 +35,7 @@ library-cli-build <options>
 	--branch, --r <branch> :: name of a branch to be cloned, defaults to 'dev'
 	--build, --b <build label> :: name of the build to be processed :: required
 	--label, --l <label> ::
+	--source, --src <path> :: path to the source directory to copy from ::
 	--major, --vma <version> :: package major version to use ::
 	--minor, --vmi <version> :: package minor version to use, minor default to 0 ::
 	--pi :: increment the package build version ::
@@ -66,6 +67,9 @@ library-cli-build <options>
 
 				if ((args.working !== null && args.working !== undefined) || (args.w !== null && args.w !== undefined))
 					this._args.working = args.working || args.w;
+
+				if ((args.source !== null && args.source !== undefined) || (args.src !== null && args.src !== undefined))
+					this._args.source = args.source || args.src;
 
 				if ((args.label !== null && args.label !== undefined) || (args.l !== null && args.l !== undefined))
 					this._args.label = args.label || args.l;

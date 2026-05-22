@@ -1,0 +1,1 @@
+node --nolazy --trace-uncaught index.js --build default --type sync --source "D:\programming\javascript\library" --label "node version update"

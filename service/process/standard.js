@@ -11,6 +11,8 @@ class StandardProcessBuildService extends ProcessBuildService {
 		this._serviceLicense = null;
 		this._servicePublish = null;
 		this._servicePublishPackage = null;
+		this._serviceSourceCopy = null;
+		this._serviceSourceLocalClean = null;
 		this._serviceSourceLocalClone = null;
 		this._serviceSourceLocalCommit = null;
 		this._serviceSourceLocalPull = null;
@@ -25,7 +27,9 @@ class StandardProcessBuildService extends ProcessBuildService {
 		this.actionPublish = 'publish';
 		this.actionPublishOnly = 'publishOnly';
 		this.actionSourceClone = 'clone';
+		this.actionSourceClean = 'clean';
 		this.actionSourceCommit = 'commit';
+		this.actionSourceCopy = 'copy';
 		this.actionSourceMerge = 'merge';
 		this.actionSourcePull = 'pull';
 		this.actionSourceStatus = 'status';
@@ -41,6 +45,8 @@ class StandardProcessBuildService extends ProcessBuildService {
 		this._serviceLicense = this._injector.getService(Constants.InjectorKeys.SERVICE_BUILD_ACTION_LICENSE);
 		this._servicePublish = this._injector.getService(Constants.InjectorKeys.SERVICE_BUILD_ACTION_PUBLISH);
 		this._servicePublishPackage = this._injector.getService(Constants.InjectorKeys.SERVICE_BUILD_ACTION_PUBLISH_PACKAGE);
+		this._serviceSourceCopy = this._injector.getService(Constants.InjectorKeys.SERVICE_BUILD_ACTION_SOURCE_LOCAL_COPY);
+		this._serviceSourceLocalClean = this._injector.getService(Constants.InjectorKeys.SERVICE_BUILD_ACTION_SOURCE_LOCAL_CLEAN);
 		this._serviceSourceLocalClone = this._injector.getService(Constants.InjectorKeys.SERVICE_BUILD_ACTION_SOURCE_LOCAL_CLONE);
 		this._serviceSourceLocalCommit = this._injector.getService(Constants.InjectorKeys.SERVICE_BUILD_ACTION_SOURCE_LOCAL_COMMIT);
 		this._serviceSourceLocalPull = this._injector.getService(Constants.InjectorKeys.SERVICE_BUILD_ACTION_SOURCE_LOCAL_PULL);
@@ -57,6 +63,16 @@ class StandardProcessBuildService extends ProcessBuildService {
 		let response;
 
 		repo.dirty = false;
+
+		if (this._checkAction(correlationId, this.actionSourceClean)) {
+			buildLog.step(repo.repo, this.actionSourceClean);
+			response = await this._serviceSourceLocalClean.process(correlationId, buildLog, repo, offset);
+			if (this._hasFailed(response)) {
+				buildLog.stepFailure(repo.repo, this.actionSourceClean, repo.dirty);
+				return response;
+			}
+			buildLog.stepSuccess(repo.repo, this.actionSourceClean, repo.dirty);
+		}
 
 		if (this._checkAction(correlationId, this.actionSourceClone)) {
 			buildLog.step(repo.repo, this.actionSourceClone);
@@ -76,6 +92,16 @@ class StandardProcessBuildService extends ProcessBuildService {
 				return response;
 			}
 			buildLog.stepSuccess(repo.repo, this.actionSourcePull, repo.dirty);
+		}
+
+		if (this._checkAction(correlationId, this.actionSourceCopy)) {
+			buildLog.step(repo.repo, this.actionSourceCopy);
+			response = await this._serviceSourceCopy.process(correlationId, buildLog, repo, offset);
+			if (this._hasFailed(response)) {
+				buildLog.stepFailure(repo.repo, this.actionSourceCopy, repo.dirty);
+				return response;
+			}
+			buildLog.stepSuccess(repo.repo, this.actionSourceCopy, repo.dirty);
 		}
 
 		if (this._checkAction(correlationId, this.actionLicense)) {
@@ -176,7 +202,7 @@ class StandardProcessBuildService extends ProcessBuildService {
 		// 	// 	}
 		// 	// 	buildLog.stepSuccess(repo.repo, this.actionPublish, true, null);
 		// }
-		if (this._checkAction(correlationId, this.actionPublish) ||
+		if ((repo.dirty && this._checkAction(correlationId, this.actionPublish)) ||
 			this._checkAction(correlationId, this.actionPublishOnly)
 		) {
 			response = await this._servicePublish.process(correlationId, buildLog, repo, offset);

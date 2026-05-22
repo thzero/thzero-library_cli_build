@@ -8,6 +8,7 @@
 			{
 				"tag": "dependencyCheck",
 				"actions": [
+					"clean",
 					"clone",
 					"dependencyCheck"
 				],
@@ -18,6 +19,7 @@
 			{
 				"tag": "license",
 				"actions": [
+					"clean",
 					"clone",
 					"license",
 					"version",
@@ -35,12 +37,14 @@
 			{
 				"tag": "pullRequestOnly",
 				"actions": [
+					"clean",
 					"pull"
 				]
 			},
 			{
 				"tag": "standard",
 				"actions": [
+					"clean",
 					"clone",
 					"dependencyUpdate",
 					"status",
@@ -51,8 +55,22 @@
 				]
 			},
 			{
+				"tag": "sync",
+				"actions": [
+					"clean",
+					"clone",
+					"copy",
+					"status",
+					"version",
+					"commit",
+					"merge",
+					"publish"
+				]
+			},
+			{
 				"tag": "versionOnly",
 				"actions": [
+					"clean",
 					"clone",
 					"versionAlways",
 					"commit",
