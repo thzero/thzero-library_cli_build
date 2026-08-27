@@ -165,7 +165,7 @@ class BuildService extends Service {
 
 					response = await this._processRepos(correlationId, args, buildService, buildLog, repo.repos, offset + 1);
 					if (this._hasFailed(response)) {
-						buildLog.failure(repo.repo, 'Unable to process');
+						buildLog.failure(repoName, 'Unable to process');
 						return response;
 					}
 					continue;
@@ -322,7 +322,9 @@ class BuildLog {
 	}
 
 	_find(name) {
-		return this.repoResults.find(l => l.name.toLowerCase() === name.toLowerCase());
+		if (String.isNullOrEmpty(name))
+			return null;
+		return this.repoResults.find(l => l.name && l.name.toLowerCase() === name.toLowerCase());
 	}
 
 	_step(name, action, success, dirty, reason, code) {

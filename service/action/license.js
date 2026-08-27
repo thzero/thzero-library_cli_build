@@ -27,6 +27,8 @@ class LicenseActionBuildService extends ActionBuildService {
 
 		fs.writeFileSync(pathLicense, license2);
 
+		this._info(`copyright updated to ${year}.`, offset);
+
 		repo.dirty = true;
 		repo.label = 'copyright update';
 
