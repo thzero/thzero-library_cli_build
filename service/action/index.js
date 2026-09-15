@@ -90,6 +90,14 @@ class ActionBuildService extends Service {
 		this._logger.info2(`${spacer}${message}`);
 	}
 
+	_infoDryRun(message, offset) {
+		this._info(`[dry run] ${message}`, offset);
+	}
+
+	_isDryRun(buildLog) {
+		return buildLog && buildLog.args && buildLog.args.dryRun === true;
+	}
+
 	get _prefix() {
 		throw new NotImplementedError();
 	}

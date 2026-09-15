@@ -12,6 +12,14 @@ class GitCommitSourceActionBuildService extends ActionBuildService {
 			baseDir: repo.path
 		});
 
+		if (this._isDryRun(buildLog)) {
+			const status = await git.status();
+			this._infoDryRun(`would commit ${status.files.length} file(s) with the label '${repo.label}' and push to the remote.`, offset);
+			for (const file of status.files)
+				this._infoDryRun(`${file.index}${file.working_dir} ${file.path}`, offset + 1);
+			return this._successResponse([], correlationId);
+		}
+
 		const results = [];
 
 		let result = await git.init();

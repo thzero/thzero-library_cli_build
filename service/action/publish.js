@@ -38,6 +38,14 @@ class PublishActionBuildService extends ActionBuildService {
 			}
 		}
 		
+		if (this._isDryRun(buildLog)) {
+			const scope = !String.isNullOrEmpty(repo.scope) ? `${repo.scope}/` : '';
+			this._infoDryRun(`would publish '${scope}${repo.repo}@${this._packageVersion(repo)}' to npm.`, offset);
+			buildLog.step(repo.repo, this.actionPublish);
+			buildLog.stepSuccess(repo.repo, this.actionPublish, repo.dirty);
+			return this._success(correlationId);
+		}
+
 		if (!fs.existsSync(repo.pathPublish))
 			fs.mkdirSync(repo.pathPublish);
 
@@ -66,6 +74,16 @@ class PublishActionBuildService extends ActionBuildService {
 		buildLog.stepSuccess(repo.repo, this.actionPublish);
 
 		return this._success(correlationId);
+	}
+
+	_packageVersion(repo) {
+		try {
+			const packageJson = JSON.parse(fs.readFileSync(repo.pathPackage));
+			return packageJson.version;
+		}
+		catch (err) {
+			return '<unknown>';
+		}
 	}
 
 	get _prefix() {

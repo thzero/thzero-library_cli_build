@@ -47,6 +47,8 @@ class BuildService extends Service {
 
 			this._logger.info2('');
 			this._logger.info2(`building '${args.build}'...`);
+			if (args.dryRun === true)
+				this._logger.info2(`*** DRY RUN - no commits, pull requests, merges, or npm publishes will be performed. ***`);
 
 			let pathCwd = process.cwd();
 			if (!String.isNullOrEmpty(args.working)) {

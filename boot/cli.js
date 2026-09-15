@@ -36,11 +36,14 @@ library-cli-build <options>
 
 	--branch, --r <branch> :: name of a branch to be cloned, defaults to 'dev'
 	--build, --b <build label> :: name of the build to be processed :: required
+	--dryRun, --dr :: process the build without committing, merging, or publishing anything ::
 	--label, --l <label> ::
 	--source, --src <path> :: path to the source directory to copy from ::
 	--major, --vma <version> :: package major version to use ::
+	--majorIncrement, --mai :: increment the package major version, resetting the minor and patch versions to 0 ::
 	--minor, --vmi <version> :: package minor version to use, minor default to 0 ::
-	--pi :: increment the package build version ::
+	--minorIncrement, --mi :: increment the package minor version, resetting the patch version to 0 ::
+	--pi :: increment the package patch version, defaults to true, use --no-pi to disable ::
 	--type, --t <build type tag> :: name of the build type used in processing ::
 	--year, --y <year> :: year to replace licensing copyright with, should be within +/-1 of current ::
 	--working, --w :: working path`,
@@ -110,8 +113,25 @@ library-cli-build <options>
 					}
 				}
 
-				if (LibraryCommonUtility.isNull(args.pi))
-					this._args.pi = true;
+				if (args.majorIncrement === true || args.mai === true)
+					this._args.majorIncrement = true;
+
+				if (args.minorIncrement === true || args.mi === true)
+					this._args.minorIncrement = true;
+
+				if (this._args.majorIncrement && this._args.minorIncrement) {
+					console.log('See --help, --majorIncrement and --minorIncrement cannot be combined.');
+					return false;
+				}
+
+				if ((this._args.majorIncrement || this._args.minorIncrement) && (LibraryCommonUtility.isNotNull(this._args.major) || LibraryCommonUtility.isNotNull(this._args.minor))) {
+					console.log('See --help, --majorIncrement and --minorIncrement cannot be combined with --major or --minor.');
+					return false;
+				}
+
+				this._args.dryRun = args.dryRun === true || args.dr === true;
+
+				this._args.pi = args.pi !== false;
 
 				if (LibraryCommonUtility.isNotNull(args.year) || LibraryCommonUtility.isNotNull(args.y)) {
 					this._args.year = args.year || args.y;

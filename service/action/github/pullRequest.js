@@ -12,6 +12,12 @@ class GitHubPullRequestSourceActionBuildService extends GitHubSourceActionBuildS
 			pullNumber: null,
 			completed: false
 		}
+
+		if (this._isDryRun(buildLog)) {
+			this._infoDryRun(`would create and merge a github pull request from 'dev' to 'master' for '${repo.repo}' titled '${repo.label}'.`, offset);
+			return this._successResponse(status, correlationId);
+		}
+
 		let response = await this._pullRequest(correlationId, repo, status, offset);
 		if (!response.success)
 			return response;

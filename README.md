@@ -31,11 +31,19 @@ library-cli-build <options>
 
 --version, --v :: cli version
 
+--branch, --r <branch> :: name of a branch to be cloned, defaults to 'dev'
 --build, --b <build label> :: name of the build specified in the configuration to be processed :: required
---dependencyCheck, --dc :: check and update dependencies, then commit, build, and deploy :: default
+--dryRun, --dr :: process the build without committing, merging, or publishing anything ::
 --label, --l <label> ::
---versionIncrement, --vi :: increment version update
---versionUpdate, --vu <major.minor.patch> :: update version to the specified version in <major.minor.patch> form
+--source, --src <path> :: path to the source directory to copy from ::
+--major, --vma <version> :: package major version to use ::
+--majorIncrement, --mai :: increment the package major version, resetting the minor and patch versions to 0 ::
+--minor, --vmi <version> :: package minor version to use, minor default to 0 ::
+--minorIncrement, --mi :: increment the package minor version, resetting the patch version to 0 ::
+--pi :: increment the package patch version, defaults to true, use --no-pi to disable ::
+--type, --t <build type tag> :: name of the build type used in processing ::
+--year, --y <year> :: year to replace licensing copyright with, should be within +/-1 of current ::
+--working, --w :: working path
 ```
 
 #### Help
@@ -55,20 +63,71 @@ library-cli-build --version
 ##### Dependency Check
 
 ```
-library-cli-build --dependencyCheck --build <build label>
+library-cli-build --build <build label> --type dependencyCheck
 ```
 
-##### Version Increment
+##### Patch Version Increment
+
+Increments the patch version, for example `0.18.16` becomes `0.18.17`.  This is the default when no other version option is specified.
 
 ```
-library-cli-build --versionIncrement
+library-cli-build --build <build label> --type versionOnly --label "version update"
 ```
 
-##### Version Update
+##### Minor Version Increment
+
+Increments the minor version and resets the patch version, for example `0.18.16` becomes `0.19.0`.
 
 ```
-library-cli-build --versionUpdate <major.minor.patch>
+library-cli-build --build <build label> --type versionOnly --label "minor version update" --minorIncrement
 ```
+
+##### Major Version Increment
+
+Increments the major version and resets the minor and patch versions, for example `0.18.16` becomes `1.0.0`.
+
+```
+library-cli-build --build <build label> --type versionOnly --label "major version update" --majorIncrement
+```
+
+##### Explicit Version
+
+Sets the major and/or minor version to a specific value; the patch version is left unchanged.  Cannot be combined with `--majorIncrement` or `--minorIncrement`.
+
+```
+library-cli-build --build <build label> --type versionOnly --label "version update" --major 1 --minor 0
+```
+
+##### npm Scripts
+
+The same version builds are available as npm scripts against the `default` build.
+
+```
+npm run start-version        :: patch version increment
+npm run start-version-minor  :: minor version increment
+npm run start-version-major  :: major version increment
+```
+
+##### Dry Run
+
+Adding `--dryRun` processes the build as normal - clone, dependency update, license, version, and status all run against the throwaway clones under `working/source` - but nothing leaves the machine.  The `commit`, `merge`, and `publish` actions log what they would have done instead of doing it, so the build log shows the full plan.
+
+```
+library-cli-build --build <build label> --type versionOnly --label "major version update" --majorIncrement --dryRun
+```
+
+The npm scripts take it as a passthrough argument.
+
+```
+npm run start-version-major -- --dryRun
+```
+
+| Action | Dry run behavior |
+|--------|------------------|
+| `clean`, `clone`, `pull`, `copy`, `status`, `dependencyCheck`, `dependencyUpdate`, `license`, `version`, `versionAlways` | Run as normal.  These only write to the throwaway clones under `working/source`, which the `clean` action removes on the next run. |
+| `commit` | Logs the label and the files that would have been committed.  Nothing is staged, committed, or pushed. |
+| `merge` | Logs the pull request that would have been created and merged.  No GitHub API calls are made. |
+| `publish` | Logs the `<scope>/<package>@<version>` that would have been published.  No publish clone, no `npm install`, and no `npm publish`. |
 
 ## Actions
 
@@ -100,8 +159,8 @@ Each build type is composed of a set of named actions that are executed in seque
 
 | Action | Description |
 |--------|-------------|
-| `version` | Increments the package version. Only runs when the repo is marked dirty. |
-| `versionAlways` | Increments the package version regardless of whether the repo is dirty. |
+| `version` | Updates the package version and the version date in `package.json`. Only runs when the repo is marked dirty. The segment that is bumped is determined by the version options described in [Usage](#usage); the patch version is incremented by default. |
+| `versionAlways` | The same as `version`, but runs regardless of whether the repo is dirty. |
 
 ### License Actions
 
