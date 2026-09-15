@@ -2,6 +2,8 @@ import fs from 'fs';
 import path from 'path';
 import minimist from 'minimist';
 
+import LibraryCommonUtility from '@thzero/library_common/utility/index.js';
+
 class Cli {
 	run() {
 		const args = minimist(process.argv.slice(2));
@@ -56,25 +58,25 @@ library-cli-build <options>
 					dependencyCheck: true
 				};
 
-				if ((args.branch !== null && args.branch !== undefined) || (args.r !== null && args.r !== undefined))
+				if (LibraryCommonUtility.isNotNull(args.branch) || LibraryCommonUtility.isNotNull(args.r))
 					this._args.branch = args.branch || args.r;
 
-				if ((args.build !== null && args.build !== undefined) || (args.b !== null && args.b !== undefined))
+				if (LibraryCommonUtility.isNotNull(args.build) || LibraryCommonUtility.isNotNull(args.b))
 					this._args.build = args.build || args.b;
 
-				if ((args.type !== null && args.type !== undefined) || (args.t !== null && args.t !== undefined))
+				if (LibraryCommonUtility.isNotNull(args.type) || LibraryCommonUtility.isNotNull(args.t))
 					this._args.buildType = args.type || args.t;
 
-				if ((args.working !== null && args.working !== undefined) || (args.w !== null && args.w !== undefined))
+				if (LibraryCommonUtility.isNotNull(args.working) || LibraryCommonUtility.isNotNull(args.w))
 					this._args.working = args.working || args.w;
 
-				if ((args.source !== null && args.source !== undefined) || (args.src !== null && args.src !== undefined))
+				if (LibraryCommonUtility.isNotNull(args.source) || LibraryCommonUtility.isNotNull(args.src))
 					this._args.source = args.source || args.src;
 
-				if ((args.label !== null && args.label !== undefined) || (args.l !== null && args.l !== undefined))
+				if (LibraryCommonUtility.isNotNull(args.label) || LibraryCommonUtility.isNotNull(args.l))
 					this._args.label = args.label || args.l;
 
-				if ((args.major !== null && args.major !== undefined) || (args.vma !== null && args.vma !== undefined)) {
+				if (LibraryCommonUtility.isNotNull(args.major) || LibraryCommonUtility.isNotNull(args.vma)) {
 					this._args.major = args.major || args.vma;
 					if (!String.isNullOrEmpty(this._args.major)) {
 						this._args.major = parseInt(this._args.major);
@@ -91,7 +93,7 @@ library-cli-build <options>
 					}
 				}
 
-				if ((args.minor !== null && args.minor !== undefined) || (args.vmi !== null && args.vmi !== undefined)) {
+				if (LibraryCommonUtility.isNotNull(args.minor) || LibraryCommonUtility.isNotNull(args.vmi)) {
 					this._args.minor = args.minor || args.vmi;
 					if (!String.isNullOrEmpty(this._args.minor)) {
 						this._args.minor = parseInt(this._args.minor);
@@ -108,10 +110,10 @@ library-cli-build <options>
 					}
 				}
 
-				if ((args.pi === null || args.pi === undefined))
+				if (LibraryCommonUtility.isNull(args.pi))
 					this._args.pi = true;
 
-				if ((args.year !== null && args.year !== undefined) || (args.y !== null && args.y !== undefined)) {
+				if (LibraryCommonUtility.isNotNull(args.year) || LibraryCommonUtility.isNotNull(args.y)) {
 					this._args.year = args.year || args.y;
 					if (!String.isNullOrEmpty(this._args.year)) {
 						this._args.year = parseInt(this._args.year);

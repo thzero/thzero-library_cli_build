@@ -141,7 +141,7 @@ class BuildService extends Service {
 	}
 
 	_info(message, offset) {
-		offset = offset != null && offset != undefined ? offset : 0;
+		offset = offset ?? 0;
 		const spacer = Constants.LogSpacer.repeat(offset);
 		this._logger.info2(`${spacer}${message}`);
 	}
@@ -342,11 +342,11 @@ class BuildLog {
 			throw Error(`Invalid step '${action}' for '${name}'.`);
 
 		step.completed = success;
-		if (dirty != null && dirty != undefined)
+		if (LibraryCommonUtility.isNotNull(dirty))
 			step.dirty = dirty;
-		if (reason != null && reason != undefined)
+		if (LibraryCommonUtility.isNotNull(reason))
 			step.reason = reason;
-		if (code != null && code != undefined)
+		if (LibraryCommonUtility.isNotNull(code))
 			step.code = code;
 
 		this.save();

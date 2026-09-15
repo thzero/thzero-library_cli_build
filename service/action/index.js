@@ -85,7 +85,7 @@ class ActionBuildService extends Service {
 	}
 
 	_info(message, offset) {
-		offset = offset != null && offset != undefined ? offset : 0;
+		offset = offset ?? 0;
 		const spacer = Constants.LogSpacer.repeat(offset);
 		this._logger.info2(`${spacer}${message}`);
 	}
