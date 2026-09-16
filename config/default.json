@@ -29,6 +29,12 @@
 				]
 			},
 			{
+				"tag": "mergeOnly",
+				"actions": [
+					"mergeOnly"
+				]
+			},
+			{
 				"tag": "publishOnly",
 				"actions": [
 					"publishOnly"

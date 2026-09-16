@@ -57,13 +57,18 @@ class PublishActionBuildService extends ActionBuildService {
 		}
 		buildLog.stepSuccess(repo.repo, this.actionPublishClone);
 
-		buildLog.step(repo.repo, this.actionPublishDependencyFetch);
-		response = await this._serviceDependencyFetchPublish.process(correlationId, buildLog, repo, offset);
-		if (!response.success) {
-			buildLog.stepFailure(repo.repo, this.actionPublishDependencyFetch);
-			return response;
+		// npm never ships node_modules in the tarball, so installing before a
+		// publish only matters when a repo has a prepare or prepack script. Build
+		// types that need it name the action explicitly.
+		if (this._checkAction(correlationId, buildLog, this.actionPublishDependencyFetch)) {
+			buildLog.step(repo.repo, this.actionPublishDependencyFetch);
+			response = await this._serviceDependencyFetchPublish.process(correlationId, buildLog, repo, offset);
+			if (!response.success) {
+				buildLog.stepFailure(repo.repo, this.actionPublishDependencyFetch);
+				return response;
+			}
+			buildLog.stepSuccess(repo.repo, this.actionPublishDependencyFetch);
 		}
-		buildLog.stepSuccess(repo.repo, this.actionPublishDependencyFetch);
 
 		buildLog.step(repo.repo, this.actionPublish);
 		response = await this._servicePackagePublish.process(correlationId, buildLog, repo, offset);

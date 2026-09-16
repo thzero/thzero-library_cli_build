@@ -43,6 +43,8 @@ library-cli-build <options>
 	--majorIncrement, --mai :: increment the package major version, resetting the minor and patch versions to 0 ::
 	--minor, --vmi <version> :: package minor version to use, minor default to 0 ::
 	--minorIncrement, --mi :: increment the package minor version, resetting the patch version to 0 ::
+	--filter, --fi <patterns> :: comma separated repo name patterns limiting the build to matching repos, '*' matches any sequence ::
+	--parallel, --par [count] :: run repos marked 'wait': false alongside their siblings, defaults to 4 at a time ::
 	--pi :: increment the package patch version, defaults to true, use --no-pi to disable ::
 	--type, --t <build type tag> :: name of the build type used in processing ::
 	--year, --y <year> :: year to replace licensing copyright with, should be within +/-1 of current ::
@@ -130,6 +132,35 @@ library-cli-build <options>
 				}
 
 				this._args.dryRun = args.dryRun === true || args.dr === true;
+
+				if (LibraryCommonUtility.isNotNull(args.filter) || LibraryCommonUtility.isNotNull(args.fi)) {
+					let filter = args.filter || args.fi;
+					if (filter === true) {
+						console.log('See --help, filter requires one or more comma separated repo name patterns.');
+						return false;
+					}
+
+					if (Array.isArray(filter))
+						filter = filter.join(',');
+
+					this._args.filter = String(filter).split(',').map(l => l.trim()).filter(l => l.length > 0);
+					if (this._args.filter.length === 0) {
+						console.log('See --help, filter must be one or more comma separated repo name patterns.');
+						return false;
+					}
+				}
+
+				if (LibraryCommonUtility.isNotNull(args.parallel) || LibraryCommonUtility.isNotNull(args.par)) {
+					let parallel = args.parallel || args.par;
+					if (parallel === true)
+						parallel = 4;
+
+					this._args.parallel = parseInt(parallel);
+					if (Number.isNaN(this._args.parallel) || (this._args.parallel < 1)) {
+						console.log('See --help, parallel must be a number greater than 0.');
+						return false;
+					}
+				}
 
 				this._args.pi = args.pi !== false;
 

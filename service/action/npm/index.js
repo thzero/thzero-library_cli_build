@@ -26,25 +26,24 @@ class NpmActionBuildService extends ActionBuildService {
 
 		let name = repo.repo;
 		if (!String.isNullOrEmpty(repo.scope))
-			name = `${repo.scope}\\${name}`;
-		const endpoint = `https://registry.npmjs.org/${name}`;
+			name = `${repo.scope}/${name}`;
+
+		// The single version document is a couple of KB and answers the question
+		// with its status code; the full packument is hundreds of KB.
+		const endpoint = `https://registry.npmjs.org/${name}/${version}`;
 		const res = await fetch(endpoint);
 		if (!res)
-			throw Error (`'${repo.name}' issue accessing the npm registry.`);
+			throw Error (`'${repo.repo}' issue accessing the npm registry.`);
 
-		if (res.status === 404)
-			this._info(`'${repo.repo}' package not found in npm registry.`, offset);
-		else if (res.status !== 200)
-			throw Error (`'${repo.name}' issue accessing the npm registry.`);
+		if (res.status === 200)
+			return { success: false };
 
-		const data = await res.json();
-		if (data && data.versions) {
-			const value = data.versions[version];
-			if (value)
-				return { success: false };
+		if (res.status === 404) {
+			this._info(`'${name}@${version}' not found in the npm registry.`, offset);
+			return { success: true };
 		}
 
-		return { success: true };
+		throw Error (`'${repo.repo}' issue accessing the npm registry; status ${res.status}.`);
 	}
 
 	async _getVersion(correlationId, repo, repPath, offset) {

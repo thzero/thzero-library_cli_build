@@ -84,6 +84,16 @@ class BuildService extends Service {
 				const build = builds.find(l => l.name.toLowerCase() === args.build.toLowerCase());
 				this._enforceNotNull('BuildService', 'process', build, 'build parameter', correlationId);
 				this._enforceNotNull('BuildService', 'process', build.repos, 'build.repos', correlationId);
+
+				if (args.filter && (args.filter.length > 0)) {
+					build.repos = this._filterRepos(build.repos, args.filter.map(l => this._filterPattern(l)));
+					const matched = this._countRepos(build.repos);
+					if (matched === 0)
+						return this._error('BuildService', 'process', `No repos in build '${args.build}' match the filter '${args.filter.join(', ')}'.`, null, null, null, correlationId);
+
+					this._info(`Filter '${args.filter.join(', ')}' matched ${matched} repo(s).`);
+				}
+
 				buildLog = new BuildLog(build, args);
 			}
 
@@ -154,47 +164,128 @@ class BuildService extends Service {
 		this._enforceNotNull('BuildService', '_processRepos', buildLog, 'buildLog', correlationId);
 		this._enforceNotNull('BuildService', '_processRepos', repos, 'repos', correlationId);
 
+		const limit = this._parallelLimit(args);
+
 		let response;
-		for (const repo of repos) {
-			this._logger.debug('BuildService', '_processRepos', 'repo', repo, correlationId);
+		for (const batch of this._batchRepos(repos, limit)) {
+			if (batch.parallel && (batch.repos.length > 1)) {
+				this._info(`processing ${batch.repos.length} independent repos together.`, offset);
 
-			if (repo.repos) {
-				offset += 1;
-				const repoName = String.isNullOrEmpty(repo.repo) ? repo.name : repo.repo;
-				try {
-					// this._info('-----------', offset);
-					this._info(`processing repo '${repoName}'.`, offset);
+				const responses = await Promise.all(batch.repos.map(l =>
+					this._processRepo(correlationId, args, buildService, buildLog, l, offset)));
 
-					response = await this._processRepos(correlationId, args, buildService, buildLog, repo.repos, offset + 1);
-					if (this._hasFailed(response)) {
-						buildLog.failure(repoName, 'Unable to process');
-						return response;
-					}
-					continue;
-				}
-				finally {
-					this._info(`...processed repo '${repoName}'.`, offset);
-					// this._info('-----------\n', offset);
-				}
-			}
-
-			this._logger.debug('BuildService', '_processRepos', 'repo.repo', repo.repo, correlationId);
-			if (String.isNullOrEmpty(repo.repo)) {
-					buildLog.failure(repo.repo, 'Repo has invalid repo name');
+				response = responses.find(l => this._hasFailed(l));
+				if (response)
 					return response;
-				}
 
-			buildLog.add(repo.repo);
-			response = await this._processExecuteRepo(correlationId, args, buildService, buildLog, LibraryCommonUtility.cloneDeep(repo), offset);
-			if (this._hasFailed(response)) {
-				buildLog.failure(repo.repo);
-				return response;
+				continue;
 			}
 
-			buildLog.success(repo.repo);
+			response = await this._processRepo(correlationId, args, buildService, buildLog, batch.repos[0], offset);
+			if (this._hasFailed(response))
+				return response;
 		}
 
 		return this._success(correlationId);
+	}
+
+	// Consecutive leaf repos marked wait:false are declared independent of one
+	// another, so they can run together. A group, or anything the build waits
+	// on, is a barrier and runs on its own.
+	_countRepos(repos) {
+		let count = 0;
+		for (const repo of repos)
+			count += repo.repos ? this._countRepos(repo.repos) : 1;
+		return count;
+	}
+
+	// Prunes the repo tree down to the leaves matching a pattern, keeping a
+	// group only when something under it survives.
+	_filterRepos(repos, patterns) {
+		const results = [];
+		for (const repo of repos) {
+			if (repo.repos) {
+				const children = this._filterRepos(repo.repos, patterns);
+				if (children.length > 0)
+					results.push(Object.assign({}, repo, { repos: children }));
+				continue;
+			}
+
+			if (String.isNullOrEmpty(repo.repo))
+				continue;
+
+			const name = repo.repo.toLowerCase();
+			if (patterns.some(l => l.test(name)))
+				results.push(repo);
+		}
+		return results;
+	}
+
+	_filterPattern(filter) {
+		const escaped = filter.toLowerCase()
+			.split('*')
+			.map(l => l.replace(/[.+?^${}()|[\]\\]/g, '\\$&'))
+			.join('.*');
+		return new RegExp('^' + escaped + '$');
+	}
+
+	_batchRepos(repos, limit) {
+		const batches = [];
+		for (const repo of repos) {
+			const parallel = (limit > 1) && !repo.repos && (repo.wait === false);
+			const last = batches.length > 0 ? batches[batches.length - 1] : null;
+
+			if (parallel && last && last.parallel && (last.repos.length < limit)) {
+				last.repos.push(repo);
+				continue;
+			}
+
+			batches.push({ parallel: parallel, repos: [repo] });
+		}
+		return batches;
+	}
+
+	_parallelLimit(args) {
+		return (args && args.parallel) ? args.parallel : 1;
+	}
+
+	async _processRepo(correlationId, args, buildService, buildLog, repo, offset) {
+		this._logger.debug('BuildService', '_processRepo', 'repo', repo, correlationId);
+
+		if (repo.repos) {
+			const repoName = String.isNullOrEmpty(repo.repo) ? repo.name : repo.repo;
+
+			// 'wait' is only read for a repo, never for the group around it.
+			if (LibraryCommonUtility.isNotNull(repo.wait))
+				this._info(`'wait' on the group '${repoName}' is ignored; it only applies to a repo.`, offset + 1);
+
+			try {
+				this._info(`processing repo '${repoName}'.`, offset + 1);
+
+				const response = await this._processRepos(correlationId, args, buildService, buildLog, repo.repos, offset + 2);
+				if (this._hasFailed(response))
+					buildLog.failure(repoName, 'Unable to process');
+
+				return response;
+			}
+			finally {
+				this._info(`...processed repo '${repoName}'.`, offset + 1);
+			}
+		}
+
+		this._logger.debug('BuildService', '_processRepo', 'repo.repo', repo.repo, correlationId);
+		if (String.isNullOrEmpty(repo.repo))
+			return this._error('BuildService', '_processRepo', `Repo '${!String.isNullOrEmpty(repo.name) ? repo.name : '<unnamed>'}' has an invalid repo name.`, null, null, null, correlationId);
+
+		buildLog.add(repo.repo);
+		const response = await this._processExecuteRepo(correlationId, args, buildService, buildLog, LibraryCommonUtility.cloneDeep(repo), offset);
+		if (this._hasFailed(response)) {
+			buildLog.failure(repo.repo);
+			return response;
+		}
+
+		buildLog.success(repo.repo);
+		return response;
 	}
 
 	async _processExecuteRepo(correlationId, args, buildService, buildLog, repo, offset) {

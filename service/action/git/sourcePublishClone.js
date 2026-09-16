@@ -23,7 +23,8 @@ class GitPublishCloneSourceActionBuildService extends ActionBuildService {
 		if (String.isNullOrEmpty(repository))
 			return this._error('GitPublishCloneSourceActionBuildService', '_process', `Empty repository url in package.json for '${repo.repo}', unable to perform a pull.`, null, null, null, correlationId);
 	
-		const statusResults = await git.clone(repository, repo.pathPublish);
+		// Read only and discarded after the publish, so history is not needed.
+		const statusResults = await git.clone(repository, repo.pathPublish, ['--depth', '1']);
 		if (statusResults)
 			this._info(`Cloned.`, offset);
 

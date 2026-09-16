@@ -48,78 +48,38 @@ class GitHubPullRequestSourceActionBuildService extends GitHubSourceActionBuildS
 			const owner = this._config.get('owner');
 			const repo = repoI.repo;
 
-			let response = await this._octokit.request('GET /repos/{owner}/{repo}/actions/runs', {
-				owner,
-				repo,
-				status: 'in_progress'
-			});
-			if (!response || (response.status !== 200))
-				return this._error('GitHubPullRequestSourceActionBuildService', '_checkWorkflow', 'Error trying to get workflow.', null, null, null, correlationId);
-
-			const results = response.data.workflow_runs && response.data.workflow_runs.length > 0;
-			if (!results) {
-				this._info(`No active workflow found.`, offset);
+			// A run is queued asynchronously after the merge, so asking for one
+			// straight away can find nothing and skip the wait entirely. Give it a
+			// window to appear before deciding there is nothing to wait for.
+			const run_id = await this._findWorkflowRun(correlationId, owner, repo, offset);
+			if (!run_id) {
+				this._info(`No workflow started within ${this._workflowDiscoverTimeout / 1000} seconds; not waiting.`, offset);
 				return this._successResponse(status, correlationId);
 			}
 
-			const workflow = response.data.workflow_runs.pop();
-			if (!workflow) {
-				this._info(`No active workflow found.`, offset);
-				return this._successResponse(status, correlationId);
+			this._logger.debug('GitHubPullRequestSourceActionBuildService', '_checkWorkflow', 'run_id', run_id, correlationId);
+
+			const pollExpires = Date.now() + this._workflowPollTimeout;
+			while (true) {
+				const response = await this._octokit.request('GET /repos/{owner}/{repo}/actions/runs/{run_id}', {
+					owner,
+					repo,
+					run_id
+				});
+				if (!response || (response.status !== 200))
+					throw Error(`Error trying to check workflow '${run_id}'.`);
+
+				if (response.data.status === 'completed') {
+					this._info(`Workflow '${run_id}' completed with '${response.data.conclusion}'.`, offset);
+					break;
+				}
+
+				if (Date.now() >= pollExpires)
+					throw Error(`Timed out after ${this._workflowPollTimeout / 1000} seconds waiting for workflow '${run_id}' to complete.`);
+
+				await new Promise(resolve => setTimeout(resolve, this._workflowPollInterval));
 			}
 
-			let run_id = workflow.id;
-			this._logger.debug('GitHubPullRequestSourceActionBuildService', '_checkWorkflow', 'workflow.id', run_id, correlationId);
-
-			const interval = 1000 * 45;
-
-			// const timeout = (prom, time) => Promise.race([prom, new Promise((_r, rej) => setTimeout(() => { rej({ success: false }); }, time))]);
-			// await timeout(new Promise((resolve, reject) => {
-			// 	const timer = setInterval((async function () {
-			// 		try {
-			// 			response = await this._octokit.request('GET /repos/{owner}/{repo}/actions/runs/{run_id}', {
-			// 				owner,
-			// 				repo,
-			// 				run_id
-			// 			});
-			// 			if (!response || (response.status !== 200))
-			// 				throw Error(`Error trying to check workflow '${run_id}'.`);
-
-			// 			if (response.data.status === 'completed') {
-			// 				clearInterval(timer);
-			// 				resolve({ success: true });
-			// 				return;
-			// 			}
-			// 		}
-			// 		catch(err) {
-			// 			reject(err);
-			// 		}
-			// 	}).bind(this), 1000 * 15);
-			// }), interval);
-			const promiseTimer = new Promise((resolve, reject) => {
-				const timer = setInterval((async function () {
-					try {
-						response = await this._octokit.request('GET /repos/{owner}/{repo}/actions/runs/{run_id}', {
-							owner,
-							repo,
-							run_id
-						});
-						if (!response || (response.status !== 200))
-							throw Error(`Error trying to check workflow '${run_id}'.`);
-
-						if (response.data.status === 'completed') {
-							clearInterval(timer);
-							resolve(this._successResponse(true, correlationId));
-							return;
-						}
-					}
-					catch(err) {
-						reject(err);
-					}
-				}).bind(this), 1000 * 15);
-			});
-
-			response = await promiseTimer;
 			return this._successResponse(status, correlationId);
 		}
 		catch (err) {
@@ -127,6 +87,44 @@ class GitHubPullRequestSourceActionBuildService extends GitHubSourceActionBuildS
 		}
 		finally {
 			this._info(`...checking workflow completed.`, offset);
+		}
+	}
+
+	get _workflowPollInterval() {
+		return 1000 * 15;
+	}
+
+	get _workflowDiscoverTimeout() {
+		return 1000 * 60;
+	}
+
+	get _workflowPollTimeout() {
+		return 1000 * 60 * 10;
+	}
+
+	async _findWorkflowRun(correlationId, owner, repo, offset) {
+		const active = ['queued', 'in_progress', 'requested', 'waiting', 'pending'];
+		const expires = Date.now() + this._workflowDiscoverTimeout;
+
+		while (true) {
+			const response = await this._octokit.request('GET /repos/{owner}/{repo}/actions/runs', {
+				owner,
+				repo,
+				per_page: 10
+			});
+			if (!response || (response.status !== 200))
+				throw Error(`Error trying to list workflows for '${repo}'.`);
+
+			const runs = response.data.workflow_runs ? response.data.workflow_runs : [];
+			const run = runs.find(l => active.includes(l.status));
+			if (run)
+				return run.id;
+
+			if (Date.now() >= expires)
+				return null;
+
+			this._info(`Waiting for a workflow to start...`, offset);
+			await new Promise(resolve => setTimeout(resolve, this._workflowPollInterval));
 		}
 	}
 

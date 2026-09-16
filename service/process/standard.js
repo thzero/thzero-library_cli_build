@@ -31,6 +31,7 @@ class StandardProcessBuildService extends ProcessBuildService {
 		this.actionSourceCommit = 'commit';
 		this.actionSourceCopy = 'copy';
 		this.actionSourceMerge = 'merge';
+		this.actionSourceMergeOnly = 'mergeOnly';
 		this.actionSourcePull = 'pull';
 		this.actionSourceStatus = 'status';
 		this.actionSourceVersion = 'version';
@@ -160,8 +161,8 @@ class StandardProcessBuildService extends ProcessBuildService {
 			buildLog.stepSuccess(repo.repo, this.actionSourceVersionAlways, repo.dirty);
 		}
 
-		if (repo.dirty && String.isNullOrEmpty(repo.label))
-			throw Error('No label.');
+		if ((repo.dirty || this._checkAction(correlationId, this.actionSourceMergeOnly)) && String.isNullOrEmpty(repo.label))
+			return this._error('StandardProcessBuildService', '_process', `No label provided for '${repo.repo}'; use --label.`, null, null, null, correlationId);
 
 		if (repo.dirty && this._checkAction(correlationId, this.actionSourceCommit)) {
 			buildLog.step(repo.repo, this.actionSourceCommit);
@@ -173,7 +174,9 @@ class StandardProcessBuildService extends ProcessBuildService {
 			buildLog.stepSuccess(repo.repo, this.actionSourceCommit, repo.dirty);
 		}
 
-		if (repo.dirty && this._checkAction(correlationId, this.actionSourceMerge)) {
+		if ((repo.dirty && this._checkAction(correlationId, this.actionSourceMerge)) ||
+			this._checkAction(correlationId, this.actionSourceMergeOnly)
+		) {
 			buildLog.step(repo.repo, this.actionSourceMerge);
 			response = await this._serviceSourceRemote.process(correlationId, buildLog, repo, offset);
 			if (this._hasFailed(response)) {
