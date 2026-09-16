@@ -40,6 +40,8 @@ library-cli-build <options>
 --majorIncrement, --mai :: increment the package major version, resetting the minor and patch versions to 0 ::
 --minor, --vmi <version> :: package minor version to use, minor default to 0 ::
 --minorIncrement, --mi :: increment the package minor version, resetting the patch version to 0 ::
+--filter, --fi <patterns> :: comma separated repo name patterns limiting the build to matching repos, '*' matches any sequence ::
+--parallel, --par [count] :: run repos marked 'wait': false alongside their siblings, defaults to 4 at a time ::
 --pi :: increment the package patch version, defaults to true, use --no-pi to disable ::
 --type, --t <build type tag> :: name of the build type used in processing ::
 --year, --y <year> :: year to replace licensing copyright with, should be within +/-1 of current ::
@@ -98,14 +100,52 @@ Sets the major and/or minor version to a specific value; the patch version is le
 library-cli-build --build <build label> --type versionOnly --label "version update" --major 1 --minor 0
 ```
 
+##### Pull Request Only
+
+Opens a pull request from `dev` to `master` for each repo and merges it, without cloning, versioning, or publishing anything.  Use it after pushing a change straight to `dev` - a workflow edit, say - that needs to reach `master` across the stack.  `--label` becomes the pull request title and is required.
+
+```
+library-cli-build --build <build label> --type mergeOnly --label "workflow updates"
+```
+
+##### Filtering Repos
+
+Any build type can be limited to a subset of the repos in `builds.json`.  Patterns match the whole repo name, are case insensitive, and `*` matches any sequence of characters.  Groups are kept only when something under them matches, so nesting order and the `wait` flags still apply.
+
+```
+--filter "library_id*,library_common*,library_server*"   :: the id, common, and server repos
+--filter "library_client*"                               :: the client repos
+--filter "library_common"                                :: exactly one repo, not library_common_service
+--filter "*vue3*"                                        :: every vue3 repo, wherever it is nested
+```
+
+The build fails if the filter matches nothing, rather than quietly doing no work.
+
+##### Running Repos In Parallel
+
+Repos are processed one at a time by default.  `--parallel` runs consecutive sibling repos marked `"wait": false` together, since that flag already declares nothing downstream is waiting on them.  A group, or any repo marked `"wait": true`, is a barrier and still runs on its own, so dependency ordering is unchanged.
+
+```
+library-cli-build --build <build label> --type standard --label update --parallel
+library-cli-build --build <build label> --type standard --label update --parallel 8
+```
+
+The count defaults to 4.  Leave the flag off to keep the build strictly sequential.
+
 ##### npm Scripts
 
 The same version builds are available as npm scripts against the `default` build.
 
 ```
+npm run start                :: standard build
+npm run start-dc             :: dependency check only
+npm run start-copyright      :: license copyright update
 npm run start-version        :: patch version increment
 npm run start-version-minor  :: minor version increment
 npm run start-version-major  :: major version increment
+npm run start-merge          :: pull request and merge, every repo in the build
+npm run start-merge-client   :: pull request and merge, the client repos
+npm run start-merge-core     :: pull request and merge, the id, common, and server repos
 ```
 
 ##### Dry Run
@@ -126,8 +166,41 @@ npm run start-version-major -- --dryRun
 |--------|------------------|
 | `clean`, `clone`, `pull`, `copy`, `status`, `dependencyCheck`, `dependencyUpdate`, `license`, `version`, `versionAlways` | Run as normal.  These only write to the throwaway clones under `working/source`, which the `clean` action removes on the next run. |
 | `commit` | Logs the label and the files that would have been committed.  Nothing is staged, committed, or pushed. |
-| `merge` | Logs the pull request that would have been created and merged.  No GitHub API calls are made. |
+| `merge`, `mergeOnly` | Logs the pull request that would have been created and merged.  No GitHub API calls are made. |
 | `publish` | Logs the `<scope>/<package>@<version>` that would have been published.  No publish clone, no `npm install`, and no `npm publish`. |
+
+## Development
+
+### Tests
+
+Unit tests run on the Node test runner; there is no test framework to install.  They exercise the actions and the build process directly, using temporary git repositories and stubbed services, and never reach the network.
+
+```
+npm test
+```
+
+Integration tests reach the npm registry and spawn `npm`, so they are kept separate.
+
+```
+npm run test:integration
+npm run test:all            :: both suites
+```
+
+| Suite | Covers |
+|-------|--------|
+| `test/unit/version.test.js` | Version increments - patch, minor, major, explicit values, and the date stamp. |
+| `test/unit/cli.test.js` | Argument parsing, aliases, conflicting flags, and numeric validation. |
+| `test/unit/actions.test.js` | Clone targets, publish paths, the license year, pull requests, and workflow polling. |
+| `test/unit/process.test.js` | Build type action selection, build log steps, repo walking, and parallel batching. |
+| `test/unit/filter.test.js` | Repo filter patterns and tree pruning. |
+| `test/unit/boot.test.js` | That every startup path returns a response, so exit codes are correct. |
+| `test/integration/npm.test.js` | The registry version check and the npm publish arguments. |
+
+### Linting
+
+```
+npm run lint
+```
 
 ## Actions
 
@@ -146,7 +219,8 @@ Each build type is composed of a set of named actions that are executed in seque
 
 | Action | Description |
 |--------|-------------|
-| `merge` | Creates a GitHub pull request for the current branch and automatically merges it. If `wait` is set on the repo, the action will poll the GitHub Actions workflow until it completes. |
+| `merge` | Creates a GitHub pull request for the current branch and automatically merges it. Only runs when the repo is marked dirty. If `wait` is set on the repo, the action waits up to a minute for the GitHub Actions run to appear and then polls it for up to ten minutes. |
+| `mergeOnly` | The same as `merge`, but runs regardless of dirty state. Requires `--label`, which becomes the pull request title. |
 
 ### NCU (npm-check-updates) Actions
 
@@ -174,6 +248,7 @@ Each build type is composed of a set of named actions that are executed in seque
 |--------|-------------|
 | `publish` | Clones the repo into the `publish/` working directory, fetches publish dependencies, and publishes the package to npm. Only runs when the repo is dirty or `publishOnly` is also active. |
 | `publishOnly` | Forces the publish action to run regardless of dirty state. |
+| `publishDependencyFetch` | Runs `npm install --production` in the publish clone before publishing. Off unless a build type names it: npm never ships `node_modules` in the tarball, so it only matters for a repo with a `prepare` or `prepack` script. |
 
 ## Build Types
 
@@ -183,6 +258,7 @@ A build type defines the ordered set of actions to execute for each repo. The fo
 |------|---------|-------------|
 | `dependencyCheck` | `clone` → `dependencyCheck` | Clones each repo and checks for available npm dependency updates. No changes are written. |
 | `license` | `clone` → `license` → `version` → `commit` → `merge` → `publish` | Updates the copyright year, bumps the version, commits, merges via pull request, and publishes. |
+| `mergeOnly` | `mergeOnly` | Opens and merges a pull request for each repo. No clone, no version change, no publish - for changes already pushed to `dev`. |
 | `publishOnly` | `publishOnly` | Republishes the current package to npm without any git operations or version changes. |
 | `pullRequestOnly` | `pull` | Pulls the latest changes from remote for each repo only. |
 | `standard` | `clone` → `dependencyUpdate` → `status` → `version` → `commit` → `merge` → `publish` | Full build: updates dependencies, checks status, bumps version if dirty, commits, merges via pull request, and publishes. |
