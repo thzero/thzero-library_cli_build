@@ -2,7 +2,7 @@ import ncu from 'npm-check-updates';
 
 import ActionBuildService from '../index.js';
 
-class NcuDepdencyUpdateActionBuildService extends ActionBuildService {
+class NcuDependencyUpdateActionBuildService extends ActionBuildService {
 	constructor() {
 		super();
 	}
@@ -20,14 +20,15 @@ class NcuDepdencyUpdateActionBuildService extends ActionBuildService {
 			
 		let upgrades = await ncu(options);
 
-		this._logger.debug('NcuDepdencyUpdateBuildService', '_process', 'upgrades', upgrades, correlationId);
+		this._logger.debug('NcuDependencyUpdateActionBuildService', '_process', 'upgrades', upgrades, correlationId);
 		const upgraded = (upgrades ? (Object.entries(upgrades).length > 0) : false);
-		this._logger.debug('NcuDepdencyUpdateBuildService', '_process', 'upgraded', upgraded, correlationId);
+		this._logger.debug('NcuDependencyUpdateActionBuildService', '_process', 'upgraded', upgraded, correlationId);
 
 		if (upgraded) {
 			this._info(`NPM changes detected.`, offset + 1);
 			this._info(JSON.stringify(upgrades), offset + 1);
-			repo.label = 'npm changes';
+			if (String.isNullOrEmpty(repo.label))
+				repo.label = 'npm changes';
 			repo.dirty = true;
 		}
 		else
@@ -45,4 +46,4 @@ class NcuDepdencyUpdateActionBuildService extends ActionBuildService {
 	}
 }
 
-export default NcuDepdencyUpdateActionBuildService;
+export default NcuDependencyUpdateActionBuildService;

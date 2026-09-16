@@ -3,7 +3,7 @@ import fs from 'fs';
 
 import ActionBuildService from '../index.js';
 
-class NcuDepdencyCheckActionBuildService extends ActionBuildService {
+class NcuDependencyCheckActionBuildService extends ActionBuildService {
 	constructor() {
 		super();
 	}
@@ -21,14 +21,15 @@ class NcuDepdencyCheckActionBuildService extends ActionBuildService {
 
 		let upgrades = await ncu(options);
 
-		this._logger.debug('NcuDepdencyUpdateBuildService', '_process', 'upgrades', upgrades, correlationId);
+		this._logger.debug('NcuDependencyCheckActionBuildService', '_process', 'upgrades', upgrades, correlationId);
 		const upgraded = (upgrades ? (Object.entries(upgrades).length > 0) : false);
-		this._logger.debug('NcuDepdencyUpdateBuildService', '_process', 'upgraded', upgraded, correlationId);
+		this._logger.debug('NcuDependencyCheckActionBuildService', '_process', 'upgraded', upgraded, correlationId);
 
 		if (upgraded) {
 			this._info(`NPM changes detected.`, offset + 1);
 			this._info(JSON.stringify(upgrades, null, 2), offset + 1);
-			repo.label = 'npm changes';
+			if (String.isNullOrEmpty(repo.label))
+				repo.label = 'npm changes';
 			// repo.dirty = true;
 
 			let packageJs = fs.readFileSync(repo.pathPackage, 'utf8');
@@ -65,4 +66,4 @@ class NcuDepdencyCheckActionBuildService extends ActionBuildService {
 	}
 }
 
-export default NcuDepdencyCheckActionBuildService;
+export default NcuDependencyCheckActionBuildService;

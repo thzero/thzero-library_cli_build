@@ -17,7 +17,7 @@ class LicenseActionBuildService extends ActionBuildService {
 
 		const buffer = fs.readFileSync(pathLicense);
 		if (!buffer)
-			return this._successResponse(results, correlationId);
+			return this._success(correlationId);
 		
 		const regex = /([0-9]{4})-([0-9]{4})/gm;
 		const license = buffer.toString();
@@ -30,7 +30,8 @@ class LicenseActionBuildService extends ActionBuildService {
 		this._info(`copyright updated to ${year}.`, offset);
 
 		repo.dirty = true;
-		repo.label = 'copyright update';
+		if (String.isNullOrEmpty(repo.label))
+			repo.label = 'copyright update';
 
 		return this._success(correlationId);
 	}

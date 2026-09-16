@@ -28,7 +28,8 @@ class PublishActionBuildService extends ActionBuildService {
 	}
 
 	async _process(correlationId, buildLog, repo, offset) {
-		repo.pathPublish = path.join(buildLog.pathCwd, 'publish');
+		const pathPublishRoot = path.join(buildLog.pathCwd, 'publish');
+		repo.pathPublish = path.join(pathPublishRoot, repo.repo);
 
 		if (!this._checkAction(correlationId, buildLog, this.actionPublishOnly)) {
 			if (!repo.dirty) {
@@ -46,8 +47,8 @@ class PublishActionBuildService extends ActionBuildService {
 			return this._success(correlationId);
 		}
 
-		if (!fs.existsSync(repo.pathPublish))
-			fs.mkdirSync(repo.pathPublish);
+		if (!fs.existsSync(pathPublishRoot))
+			fs.mkdirSync(pathPublishRoot);
 
 		buildLog.step(repo.repo, this.actionPublishClone);
 		let response = await this._servicePublishCloneSource.process(correlationId, buildLog, repo, offset);

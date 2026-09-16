@@ -3,25 +3,11 @@ import config from 'config';
 import Constants from '../constants.js';
 import LibraryCommonServiceConstants from '@thzero/library_common_service/constants.js';
 
-import LibraryCommonUtility from '@thzero/library_common/utility/index.js';
-import LibraryMomentUtility from '@thzero/library_common/utility/moment.js';
-
-// require('@thzero/library_common/utility/string');
-String.isNullOrEmpty = function(value) {
-	//return !(typeof value === 'string' && value.length > 0)
-	return !value;
-}
-
-String.isString = function(value) {
-	return (typeof value === "string" || value instanceof String);
-}
-
-String.trim = function(value) {
-	if (!value || !String.isString(value))
-		return value;
-	return value.trim();
-}
+import '@thzero/library_common/utility/string.js';
 import injector from '@thzero/library_common/utility/injector.js';
+import LibraryCommonUtility from '@thzero/library_common/utility/index.js';
+import Response from '@thzero/library_common/response/index.js';
+import LibraryMomentUtility from '@thzero/library_common/utility/moment.js';
 
 import configService from '../service/config.js';
 // import appMetricsMonitoringService from '@thzero/library_server_monitoring_appmetrics';
@@ -35,10 +21,16 @@ import bootCli from './cli.js';
 
 class BootMain {
 	async start(...args) {
+		const correlationId = LibraryCommonUtility.generateId();
+
 		try {
 			const cli = new bootCli();
-			if (!cli.run())
-				return false;
+			if (!cli.run()) {
+				if ((cli.cmd === 'help') || (cli.cmd === 'version'))
+					return Response.success(correlationId);
+
+				return Response.error('BootMain', 'start', 'Invalid command line arguments.', null, null, null, correlationId);
+			}
 
 			process.on('uncaughtException', function(err) {
 				console.log('Caught exception', err);
@@ -52,7 +44,7 @@ class BootMain {
 			// https://github.com/lorenwest/node-config/wiki
 			this._appConfig = new configService(config.get('app'));
 
-			const plugins = this._initPlugins(args);
+			const plugins = await this._initPlugins(args);
 
 			injector.addSingleton(LibraryCommonServiceConstants.InjectorKeys.SERVICE_CONFIG, this._appConfig);
 
@@ -61,10 +53,10 @@ class BootMain {
 
 			// this._injectService(LibraryCommonServiceConstants.InjectorKeys.SERVICE_MONITORING, new appMetricsMonitoringService());
 			this._injectService(Constants.InjectorKeys.SERVICE_LOGGER_PINO, new pinoLoggerService());
-			this._injectService(Constants.InjectorKeys.SERVICE_LOGGER_WISTON, new winstonLoggerService());
+			this._injectService(Constants.InjectorKeys.SERVICE_LOGGER_WINSTON, new winstonLoggerService());
 			this._injectService(LibraryCommonServiceConstants.InjectorKeys.SERVICE_LOGGER, loggerServiceI);
 			loggerServiceI.register(Constants.InjectorKeys.SERVICE_LOGGER_PINO);
-			loggerServiceI.register(Constants.InjectorKeys.SERVICE_LOGGER_WISTON);
+			loggerServiceI.register(Constants.InjectorKeys.SERVICE_LOGGER_WINSTON);
 
 			this._injectService(Constants.InjectorKeys.SERVICE_BUILD, new buildService());
 
@@ -78,24 +70,25 @@ class BootMain {
 
 			try {
 				const service = this._injector.getService(Constants.InjectorKeys.SERVICE_BUILD);
-				const response = service.process(LibraryCommonUtility.generateId(), cli.args);
-				return response;
+				return await service.process(correlationId, cli.args);
 			}
 			catch (err) {
-				loggerServiceI.exception('Build', 'init', err);
+				loggerServiceI.exception('Build', 'start', err);
+				return Response.error('BootMain', 'start', null, err, null, null, correlationId);
 			}
 		}
 		catch (err) {
 			console.error(err);
+			return Response.error('BootMain', 'start', null, err, null, null, correlationId);
 		}
 	}
 
-	_initPlugins(plugins) {
+	async _initPlugins(plugins) {
 		let obj;
 		const results = [];
 		for (const plugin of plugins) {
 			obj = new plugin();
-			obj.init(this._appConfig, injector);
+			await obj.init(this._appConfig, injector);
 			results.push(obj);
 		}
 		return results;

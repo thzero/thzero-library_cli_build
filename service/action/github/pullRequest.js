@@ -163,8 +163,8 @@ class GitHubPullRequestSourceActionBuildService extends GitHubSourceActionBuildS
 
 			if (repoI.pullNumber) {
 				this._info(`...creating github pull request #'${repoI.pullNumber}' completed.`, offset);
-				this._logger.debug('GitHubPullRequestSourceActionBuildService', '_pullRequest', 'pullNumber', pullNumber, correlationId);
-				return this._successResponse(pullNumber, correlationId);
+				this._logger.debug('GitHubPullRequestSourceActionBuildService', '_pullRequest', 'pullNumber', repoI.pullNumber, correlationId);
+				return this._successResponse(repoI.pullNumber, correlationId);
 			}
 
 			const config = {
@@ -178,7 +178,7 @@ class GitHubPullRequestSourceActionBuildService extends GitHubSourceActionBuildS
 
 			let response = await this._octokit.request(`POST /repos/{owner}/{repo}/pulls`, config);
 			if (!response || (response.status !== 201))
-				throw Error(`Error trying to merge pull request '${pull_number}.`);
+				throw Error(`Error trying to create a pull request for '${repoI.repo}'.`);
 
 			repoI.pullNumber = response.data.number;
 
@@ -222,7 +222,7 @@ class GitHubPullRequestSourceActionBuildService extends GitHubSourceActionBuildS
 
 			const response = await this._octokit.request(`PUT /repos/{owner}/{repo}/pulls/{pull_number}/merge`, config);
 			if (!response || (response.status !== 200)) 
-				throw Error(`Error trying to merge pull request '${pull_number}.`);
+				throw Error(`Error trying to merge pull request '${repoI.pullNumber}'.`);
 
 			status.merged = true;
 			this._info(`...merge github pull request '${repoI.pullNumber}' completed.`, offset);

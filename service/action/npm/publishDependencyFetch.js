@@ -23,7 +23,7 @@ class NpmFetchDependencyPublishActionBuildService extends NpmActionBuildService 
 			// 			NPM_TOKEN: this._token
 			// 		}
 			// 	});
-			await new Promise(async (resolve, reject) => {
+			await new Promise((resolve, reject) => {
 				const child = spawn('npm', [
 					'install',
 					'--production'

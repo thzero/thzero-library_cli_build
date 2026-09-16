@@ -11,7 +11,7 @@ class NpmActionBuildService extends ActionBuildService {
 	}
 
 	async init(injector) {
-		super.init(injector);
+		await super.init(injector);
 
 		const tokens = this._getTokens(null);
 		if (!tokens)

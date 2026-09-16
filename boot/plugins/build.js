@@ -11,8 +11,8 @@ import GitHubSourceRemoteBuildActionService from '../../service/action/github/pu
 import LicenseBuildActionService from '../../service/action/license.js';
 import NpmDependencyFetchPublishBuildService from '../../service/action/npm/publishDependencyFetch.js';
 import NpmPublishPackageBuildService from '../../service/action/npm/publishPackage.js';
-import NcuDepdencyCheckBuildActionService from '../../service/action/ncu/dependencyCheck.js';
-import NcuDepdencyUpdateBuildActionService from '../../service/action/ncu/dependencyUpdate.js';
+import NcuDependencyCheckBuildActionService from '../../service/action/ncu/dependencyCheck.js';
+import NcuDependencyUpdateBuildActionService from '../../service/action/ncu/dependencyUpdate.js';
 import PublishBuildActionService from '../../service/action/publish.js';
 import SourceCleanActionBuildService from '../../service/action/source/clean.js';
 import SourceCopyActionBuildService from '../../service/action/source/copy.js';
@@ -28,8 +28,8 @@ class BuildBootPlugin extends BootPlugin {
 
 		this._injectService(Constants.InjectorKeys.SERVICE_BUILD_STANDARD, new StandardProcessBuildService());
 
-		this._injectService(Constants.InjectorKeys.SERVICE_BUILD_ACTION_DEPENDENCY_CHECK, new NcuDepdencyCheckBuildActionService());
-		this._injectService(Constants.InjectorKeys.SERVICE_BUILD_ACTION_DEPENDENCY_UPDATE, new NcuDepdencyUpdateBuildActionService());
+		this._injectService(Constants.InjectorKeys.SERVICE_BUILD_ACTION_DEPENDENCY_CHECK, new NcuDependencyCheckBuildActionService());
+		this._injectService(Constants.InjectorKeys.SERVICE_BUILD_ACTION_DEPENDENCY_UPDATE, new NcuDependencyUpdateBuildActionService());
 		this._injectService(Constants.InjectorKeys.SERVICE_BUILD_ACTION_LICENSE, new LicenseBuildActionService());
 		this._injectService(Constants.InjectorKeys.SERVICE_BUILD_ACTION_PUBLISH, new PublishBuildActionService());
 		this._injectService(Constants.InjectorKeys.SERVICE_BUILD_ACTION_PUBLISH_DEPENDENCY_FETCH, new NpmDependencyFetchPublishBuildService());

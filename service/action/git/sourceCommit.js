@@ -22,9 +22,7 @@ class GitCommitSourceActionBuildService extends ActionBuildService {
 
 		const results = [];
 
-		let result = await git.init();
-		results.push(result);
-		result = await git.add('.');
+		let result = await git.add('.');
 		results.push(result);
 		result = await git.commit(repo.label);
 		results.push(result);

@@ -18,7 +18,7 @@ class GitCloneSourceActionBuildService extends ActionBuildService {
 	
 		const branch = !String.isNullOrEmpty(repo.branch) ? repo.branch : (!String.isNullOrEmpty(buildLog.args.branch) ? buildLog.args.branch : 'dev');
 		const options = ['--branch', branch];
-		const statusResults = await git.clone(repository, repo.pathPublish, options);
+		const statusResults = await git.clone(repository, repo.path, options);
 		if (statusResults)
 			this._info(`Cloned.`, offset);
 

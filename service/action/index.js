@@ -46,8 +46,8 @@ class ActionBuildService extends Service {
 	}
 
 	_checkAction(correlationId, buildLog, action) {
-		this._enforceNotNull('ProcessBuildService', '_checkAction', buildLog, 'buildLog', correlationId);
-		this._enforceNotEmpty('ProcessBuildService', '_checkAction', action, 'action', correlationId);
+		this._enforceNotNull('ActionBuildService', '_checkAction', buildLog, 'buildLog', correlationId);
+		this._enforceNotEmpty('ActionBuildService', '_checkAction', action, 'action', correlationId);
 
 		if (!buildLog.buildType || !buildLog.buildType.actions)
 			return false;

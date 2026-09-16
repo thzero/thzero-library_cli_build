@@ -23,16 +23,13 @@ class PluginBuildService extends Service {
 		if (this._hasFailed(response))
 			return response;
 
-		for(const step of this._steps) 
-		await this._completeItem(correlationId, buildLog, step);
+		for (const step of this._steps)
+			await this._completeItem(correlationId, buildLog, step);
 
 		response = await this._completeAfter(correlationId, buildLog);
 		if (this._hasFailed(response))
 			return response;
 
-		response.results;
-		if (this._hasFailed(response))
-			return response;
 
 		this._logger.info2(this._outputAccumulator);
 		if (!String.isNullOrEmpty(this._outputAccumulator))

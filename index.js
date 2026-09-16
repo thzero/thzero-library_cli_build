@@ -4,7 +4,7 @@ import BuildPlugin from './boot/plugins/build.js';
 
 (async () => {
 	const response = await (new BootMain()).start(BuildPlugin);
-	if (response.success)
+	if (response && response.success)
 		return response;
 
 	process.exit(1);

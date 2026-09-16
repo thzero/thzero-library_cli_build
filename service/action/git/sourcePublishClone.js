@@ -1,5 +1,4 @@
 import fs from 'fs';
-import path from 'path';
 
 import simpleGit from 'simple-git';
 
@@ -11,7 +10,6 @@ class GitPublishCloneSourceActionBuildService extends ActionBuildService {
     }
 
 	async _process(correlationId, buildLog, repo, offset) {
-		repo.pathPublish = path.join(repo.pathPublish, repo.repo);
 		if (!fs.existsSync(repo.pathPublish))
 			fs.mkdirSync(repo.pathPublish);
 

@@ -20,7 +20,7 @@ const Constants = {
 		SERVICE_BUILD_STANDARD: 'serviceBuildStandard',
 
 		SERVICE_LOGGER_PINO: 'serviceLoggerPino',
-		SERVICE_LOGGER_WISTON: 'serviceLoggerWinston'
+		SERVICE_LOGGER_WINSTON: 'serviceLoggerWinston'
 	},
 	BuildTags: {
 		Standard: 'standard'

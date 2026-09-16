@@ -15,6 +15,10 @@ class Cli {
 		return this._args;
 	}
 
+	get cmd() {
+		return this._cmd;
+	}
+
 	_determineCommand(args) {
 		this._cmd = 'build';
 
@@ -57,8 +61,6 @@ library-cli-build <options>
 	_processCommand(args) {
 		switch (this._cmd) {
 			case 'build':
-				console.log('build');
-
 				this._args = {
 					dependencyCheck: true
 				};
@@ -85,12 +87,11 @@ library-cli-build <options>
 					this._args.major = args.major || args.vma;
 					if (!String.isNullOrEmpty(this._args.major)) {
 						this._args.major = parseInt(this._args.major);
-						if (this._args.major === NaN) {
+						if (Number.isNaN(this._args.major)) {
 							console.log('See --help, major must be a number.');
 							return false;
 						}
-						
-						const year = new Date().getFullYear();
+
 						if (this._args.major < 1) {
 							console.log(`See --help, major must be a number that is greater than 1.`);
 							return false;
@@ -102,12 +103,11 @@ library-cli-build <options>
 					this._args.minor = args.minor || args.vmi;
 					if (!String.isNullOrEmpty(this._args.minor)) {
 						this._args.minor = parseInt(this._args.minor);
-						if (this._args.minor === NaN) {
+						if (Number.isNaN(this._args.minor)) {
 							console.log('See --help, minor must be a number.');
 							return false;
 						}
-						
-						const year = new Date().getFullYear();
+
 						if (this._args.minor < 0) {
 							console.log(`See --help, minor must be a number that is greater than 0.`);
 							return false;
@@ -168,7 +168,7 @@ library-cli-build <options>
 					this._args.year = args.year || args.y;
 					if (!String.isNullOrEmpty(this._args.year)) {
 						this._args.year = parseInt(this._args.year);
-						if (this._args.year === NaN) {
+						if (Number.isNaN(this._args.year)) {
 							console.log('See --help, year must be a number.');
 							return false;
 						}
@@ -198,8 +198,8 @@ library-cli-build <options>
 				return  false;
 		}
 
-		console.error(`"${cmd}" is not a valid command!`)
-		return  false;
+		console.error(`"${this._cmd}" is not a valid command!`);
+		return false;
 	}
 
 	_version() {

@@ -67,11 +67,7 @@ class BuildService extends Service {
 			if (!fs.existsSync(pathCwd))
 				throw Error (`Working path '${pathCwd}' does not exist.`);
 
-			if (false) {
-				const build = null; // TODO: load from file
-				buildLog = new BuildLog(build, args);
-			}
-			else {
+			{
 				let builds;
 				const pathBuild = path.join(pathCwd, 'builds.json');
 				if (fs.existsSync(pathBuild)) {
@@ -317,8 +313,6 @@ class BuildService extends Service {
 			this._info(`repo working '${repo.repo}' package path: ${repo.pathPackage}`, offset);
 
 			repo.label = args.label;
-			repo.versionIncrement = args.versionIncrement;
-			repo.versionUpdate = args.versionUpdate;
 
 			return await buildService.process(LibraryCommonUtility.generateId(), buildLog, repo, offset + 1);
 		}

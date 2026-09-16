@@ -17,7 +17,6 @@ class StandardProcessBuildService extends ProcessBuildService {
 		this._serviceSourceLocalCommit = null;
 		this._serviceSourceLocalPull = null;
 		this._serviceSourceLocalStatus = null;
-		this._serviceSourceLocalCommit = null;
 		this._serviceSourceRemote = null;
 		this._serviceVersion = null;
 
@@ -136,9 +135,13 @@ class StandardProcessBuildService extends ProcessBuildService {
 		}
 
 		if (this._checkAction(correlationId, this.actionSourceStatus)) {
+			buildLog.step(repo.repo, this.actionSourceStatus);
 			response = await this._serviceSourceLocalStatus.process(correlationId, buildLog, repo, offset);
-			if (this._hasFailed(response))
+			if (this._hasFailed(response)) {
+				buildLog.stepFailure(repo.repo, this.actionSourceStatus, repo.dirty);
 				return response;
+			}
+			buildLog.stepSuccess(repo.repo, this.actionSourceStatus, repo.dirty);
 		}
 
 		if (repo.dirty && this._checkAction(correlationId, this.actionSourceVersion)) {
@@ -155,7 +158,7 @@ class StandardProcessBuildService extends ProcessBuildService {
 			buildLog.step(repo.repo, this.actionSourceVersionAlways);
 			response = await this._serviceVersion.process(correlationId, buildLog, repo, offset);
 			if (this._hasFailed(response)) {
-				buildLog.stepFailure(repo.repo, this.actionSourceVersion, repo.dirty);
+				buildLog.stepFailure(repo.repo, this.actionSourceVersionAlways, repo.dirty);
 				return response;
 			}
 			buildLog.stepSuccess(repo.repo, this.actionSourceVersionAlways, repo.dirty);
