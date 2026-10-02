@@ -36,6 +36,9 @@ jobs:
     - name: Node Dependencies
       run: |
         npm install --no-package-lock
+    - name: Test
+      run: |
+        npm test
     - name: Package Info
       run: |
         cat package.json
