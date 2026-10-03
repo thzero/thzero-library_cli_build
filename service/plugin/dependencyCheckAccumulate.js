@@ -1,5 +1,7 @@
 import PluginBuildService from './index.js';
 
+import { colorizeDiff, dependencyGroups, groupHeading } from '../utility/version.js';
+
 class DependencyCheckAccumulatePluginBuildService extends PluginBuildService {
 	static TAG = 'dependencyCheckAccumulate';
 
@@ -58,11 +60,24 @@ class DependencyCheckAccumulatePluginBuildService extends PluginBuildService {
 		// this._output(correlationId, `\tUpgrades Available: ${upgrades}`);
 		// this._output(correlationId, JSON.stringify(step.upgrades, null, 2));
 
+		// grouped under ncu's own headings, patch then minor then major
 		let current;
-		for (const property in step.upgrades) {
-			current = step.upgrades[property].current;
-			this._output(correlationId, `\t\t${property}: ${!String.isNullOrEmpty(current) ? current : 'none'} -> ${step.upgrades[property].upgrade} `);
+		let upgrade;
+		let prefix;
+		for (const group of dependencyGroups(upgrades)) {
+			this._output(correlationId, `\t\t${groupHeading(group.group)}`, `\t\t${groupHeading(group.group, true)}`);
 
+			for (const property of group.packages) {
+				current = upgrades[property].current;
+				upgrade = upgrades[property].upgrade;
+				prefix = `\t\t\t${property}: ${!String.isNullOrEmpty(current) ? current : 'none'} -> `;
+				// the colored line goes to the console, the plain one to the output file
+				this._output(correlationId, `${prefix}${colorizeDiff(current, upgrade)} `, `${prefix}${upgrade} `);
+			}
+		}
+
+		// counted separately from the grouping, so the totals cannot lose an entry
+		for (const property in upgrades) {
 			if (!this._totals[property])
 				this._totals[property] = 0;
 			this._totals[property] = this._totals[property] + 1;

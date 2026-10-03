@@ -10,6 +10,7 @@ import GitPublishCloneSourceActionBuildService from '../../service/action/git/so
 import GitHubPullRequestSourceActionBuildService from '../../service/action/github/pullRequest.js';
 import LicenseActionBuildService from '../../service/action/license.js';
 import PublishActionBuildService from '../../service/action/publish.js';
+import PublishPackageNpmActionBuildService from '../../service/action/npm/publishPackage.js';
 
 import { logger, tempDir, gitRepo, gitBranch, gitCommitCount, writePackage, BuildLogStub, Response } from '../helpers.js';
 
@@ -345,5 +346,17 @@ describe('workflow polling', () => {
 			assert.ok(instance.calls() < 100, `bounded poll count, got ${instance.calls()}`);
 			assert.ok(clock() - start <= (1000 * 60 * 10) + (1000 * 15));
 		});
+	});
+});
+
+describe('npm publish', () => {
+	// npm 11 stopped applying 'latest' implicitly when a higher version was
+	// published before, which broke @thzero/library_id_nanoid (a stray 18.0.1
+	// sits above its 0.19.x line) and would have broken @thzero/library_cli.
+	it('names the latest tag explicitly', () => {
+		const args = new PublishPackageNpmActionBuildService()._publishArgs;
+
+		assert.deepEqual(args, [ 'publish', '.', '--access', 'public', '--tag', 'latest' ]);
+		assert.equal(args[args.indexOf('--tag') + 1], 'latest');
 	});
 });

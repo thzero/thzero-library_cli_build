@@ -38,12 +38,7 @@ class PublishPackageNpmActionBuildService extends NpmActionBuildService {
 				// 	}
 				// });
 			await new Promise((resolve, reject) => {
-				const child = spawn('npm', [
-					'publish',
-					'.',
-					'--access',
-					'public'
-				], 
+				const child = spawn('npm', this._publishArgs, 
 				{ 
 					cwd: repo.pathPublish,
 					// stdio: 'inherit',
@@ -96,6 +91,13 @@ class PublishPackageNpmActionBuildService extends NpmActionBuildService {
 
 	get _prefix() {
 		return 'npm';
+	}
+
+	// The tag is named explicitly because npm refuses to apply 'latest'
+	// implicitly when a higher version was published before, which is the case
+	// for any package carrying a stray version above its release line.
+	get _publishArgs() {
+		return [ 'publish', '.', '--access', 'public', '--tag', 'latest' ];
 	}
 
 	get _step() {

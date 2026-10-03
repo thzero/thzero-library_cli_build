@@ -34,16 +34,7 @@ class NcuDependencyCheckActionBuildService extends ActionBuildService {
 
 			let packageJs = fs.readFileSync(repo.pathPackage, 'utf8');
 			packageJs = JSON.parse(packageJs);
-			let current;
-			for (const [key, value] of Object.entries(upgrades)) {
-				try {
-					current = packageJs['dependencies'][key];
-					upgrades[key] = { current: current, upgrade: value };
-				}
-				catch (ignore) {
-					upgrades[key] = { upgrade: value };
-				}
-			}
+			this._mapCurrentVersions(upgrades, packageJs);
 		}
 		else
 			this._info(`No NPM changes detected.`, offset + 1);
@@ -55,6 +46,26 @@ class NcuDependencyCheckActionBuildService extends ActionBuildService {
 		}
 
 		return this._successResponse(upgraded, correlationId);
+	}
+
+	// ncu reports upgrades from every dependency section, so the current version
+	// has to be looked up in all of them - reading only 'dependencies' left every
+	// dev, peer and optional dependency without a current version, which the
+	// accumulate plugin then reported as 'none'.
+	_mapCurrentVersions(upgrades, packageJs) {
+		const sections = [ 'dependencies', 'devDependencies', 'peerDependencies', 'optionalDependencies' ];
+		let current;
+		for (const [key, value] of Object.entries(upgrades)) {
+			current = null;
+			for (const section of sections) {
+				if (packageJs[section] && packageJs[section][key]) {
+					current = packageJs[section][key];
+					break;
+				}
+			}
+			upgrades[key] = String.isNullOrEmpty(current) ? { upgrade: value } : { current: current, upgrade: value };
+		}
+		return upgrades;
 	}
 
 	get _prefix() {

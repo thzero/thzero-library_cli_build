@@ -11,6 +11,7 @@ class PluginBuildService extends Service {
 
 		this._actions = [];
 		this._outputAccumulator = null;
+		this._outputAccumulatorPlain = null;
 		this._steps = [];
 
 		this._initializeActions();
@@ -18,6 +19,7 @@ class PluginBuildService extends Service {
 
 	async complete(correlationId, buildLog) {
 		this._outputAccumulator = '';
+		this._outputAccumulatorPlain = '';
 
 		let response = await this._completeBefore(correlationId, buildLog);
 		if (this._hasFailed(response))
@@ -32,8 +34,9 @@ class PluginBuildService extends Service {
 
 
 		this._logger.info2(this._outputAccumulator);
-		if (!String.isNullOrEmpty(this._outputAccumulator))
-			await this._write(correlationId, buildLog, this._outputAccumulator)
+		// the console output may carry ansi colors; the file gets the plain copy
+		if (!String.isNullOrEmpty(this._outputAccumulatorPlain))
+			await this._write(correlationId, buildLog, this._outputAccumulatorPlain)
 
 		return response;
 	}
@@ -87,8 +90,11 @@ class PluginBuildService extends Service {
 		this._actions.push(action);
 	}
 
-	_output(correlationId, output) {
+	// outputPlain is the same line without any coloring, for _write; when it is
+	// not supplied the line is assumed to be plain already.
+	_output(correlationId, output, outputPlain) {
 		this._outputAccumulator += output + '\n';
+		this._outputAccumulatorPlain += (outputPlain === null || outputPlain === undefined ? output : outputPlain) + '\n';
 	}
 
 	async _process(correlationId, repo, step, data) {
