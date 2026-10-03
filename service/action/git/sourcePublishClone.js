@@ -1,6 +1,6 @@
 import fs from 'fs';
 
-import simpleGit from 'simple-git';
+import { simpleGit } from 'simple-git';
 
 import ActionBuildService from '../index.js';
 
